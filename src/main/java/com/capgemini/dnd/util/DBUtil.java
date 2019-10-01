@@ -121,7 +121,7 @@ public class DBUtil {
 		}
 		return dataSource;
 	}
-	public static Date stringtoDate(java.util.Date m_d) {
+	public static Date utilDatetoSQLDate(java.util.Date m_d) {
         return new Date(m_d.getTime());
         
     }

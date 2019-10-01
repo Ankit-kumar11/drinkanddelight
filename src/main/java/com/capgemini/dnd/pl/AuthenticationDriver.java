@@ -1,6 +1,8 @@
 package com.capgemini.dnd.pl;
 
-import java.sql.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Scanner;
 
 import org.apache.log4j.Logger;
@@ -32,6 +34,7 @@ public class AuthenticationDriver {
 	public static void main(String[] args) throws Exception {
 		Scanner scanner = new Scanner(System.in);
 		EmployeeService employeeService = new EmployeeServiceImpl();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		String DIGITS_ONLY_REGEX = "[0-9]+";
         while (true) {
             AuthenticationDriver.viewMenu();
@@ -102,9 +105,10 @@ public class AuthenticationDriver {
 				while(!correctDateFormat) {
 					try {
 						System.out.println("Enter Date of Birth (YYYY-MM-DD): ");
-						employee.setDob(Date.valueOf(scanner.nextLine()));
+						
+						employee.setDob((sdf.parse(scanner.nextLine())));
 						correctDateFormat=true;
-					}catch(IllegalArgumentException exception) {
+					}catch(ParseException exception) {
 						System.err.println("Invalid format of date!!!");
 					}
 				}

@@ -45,7 +45,7 @@ public class RawMaterialDAOImpl implements RawMaterialDAO {
 			try {
 				preparedStatement = con.prepareStatement(QueryMapper.UPDATE_RM_DELIVERY_STATUS);
 				preparedStatement.setString(1, newStatus);
-				preparedStatement.setDate(2, DBUtil.stringtoDate(today_date));
+				preparedStatement.setDate(2, DBUtil.utilDatetoSQLDate(today_date));
 				preparedStatement.setInt(3, Integer.parseInt(oid));
 				queryResult = preparedStatement.executeUpdate();
 				if (queryResult == 0) {
@@ -119,10 +119,10 @@ public class RawMaterialDAOImpl implements RawMaterialDAO {
 				isFetched = 1;
 
 				int index = 1;
-				System.out.println(rs.getInt(index++) + "\t" + rs.getString(index++) + "\t" + rs.getString(index++) + "\t"
-						+ rs.getString(index++) + "\t" + rs.getDouble(index++) + "\t" + rs.getString(index++) + "\t"
-						+ rs.getDate(index++) + "\t" + rs.getDate(index++) + "\t" + rs.getDouble(index++) + "\t" + rs.getDouble(index++)
-						+ "\t" + rs.getString(index++) + "\t" + rs.getString(index++));
+				System.out.println(rs.getInt(index++) + "\t" + rs.getString(index++) + "\t" + rs.getString(index++)
+						+ "\t" + rs.getString(index++) + "\t" + rs.getDouble(index++) + "\t" + rs.getString(index++)
+						+ "\t" + rs.getDate(index++) + "\t" + rs.getDate(index++) + "\t" + rs.getDouble(index++) + "\t"
+						+ rs.getDouble(index++) + "\t" + rs.getString(index++) + "\t" + rs.getString(index++));
 
 			}
 			if (isFetched == 0) {
@@ -139,7 +139,7 @@ public class RawMaterialDAOImpl implements RawMaterialDAO {
 			throw new DisplayException(Constants.DISPLAY_EXCEPTION_MESSAGE_TECHNICAL_PROBLEM);
 		} finally {
 			try {
-				// resultSet.close();
+
 				pst.close();
 				con.close();
 			} catch (SQLException sqlException) {
@@ -361,8 +361,8 @@ public class RawMaterialDAOImpl implements RawMaterialDAO {
 		PreparedStatement pst = null;
 		try {
 			pst = con.prepareStatement(QueryMapper.DISPLAY_RAWMATERIAL_ORDER_BW_DATES);
-			pst.setDate(1, DBUtil.stringtoDate(dt1));
-			pst.setDate(2, DBUtil.stringtoDate(dt2));
+			pst.setDate(1, DBUtil.utilDatetoSQLDate(dt1));
+			pst.setDate(2, DBUtil.utilDatetoSQLDate(dt2));
 			ResultSet rs = pst.executeQuery();
 
 			int isFetched = 0;
@@ -449,13 +449,10 @@ public class RawMaterialDAOImpl implements RawMaterialDAO {
 	}
 
 	/*******************************************************************************************************
-	 * - Function Name : add raw material order 
-	 * - Input Parameters :RawmaterialOrder newRMO 
-	 * - Return Type : String 
-	 * - Throws : Exception 
-	 * - Author : Capgemini 
-	 * - Creation Date : 25/09/2019 
-	 * - Description : Raw Material orders is placed i.e. entry is added in database
+	 * - Function Name : add raw material order - Input Parameters :RawmaterialOrder
+	 * newRMO - Return Type : String - Throws : Exception - Author : Capgemini -
+	 * Creation Date : 25/09/2019 - Description : Raw Material orders is placed i.e.
+	 * entry is added in database
 	 ********************************************************************************************************/
 	public boolean addRawMaterialOrder(RawMaterialOrder newRMO) throws Exception {
 		boolean added = false;
@@ -466,14 +463,16 @@ public class RawMaterialDAOImpl implements RawMaterialDAO {
 		stmt.setString(3, newRMO.getSupplierId().toUpperCase());
 		stmt.setDouble(4, newRMO.getQuantityValue());
 		stmt.setString(5, newRMO.getQuantityUnit().toLowerCase());
-		stmt.setDate(6, DBUtil.stringtoDate(newRMO.getDateOfOrder()));
-		stmt.setDate(7, DBUtil.stringtoDate(newRMO.getDateOfDelivery()));
+		stmt.setDate(6, DBUtil.utilDatetoSQLDate(newRMO.getDateOfOrder()));
+		stmt.setDate(7, DBUtil.utilDatetoSQLDate(newRMO.getDateOfDelivery()));
 		stmt.setDouble(8, newRMO.getPricePerUnit());
 		stmt.setDouble(9, newRMO.getTotalPrice());
 		stmt.setString(10, newRMO.getDeliveryStatus().toUpperCase());
 		stmt.setString(11, newRMO.getWarehouseId().toLowerCase());
 
 		int noOfRows = stmt.executeUpdate();
+
+		stmt.close();
 		con.close();
 		if (noOfRows == 1)
 			added = true;
@@ -499,23 +498,27 @@ public class RawMaterialDAOImpl implements RawMaterialDAO {
 
 		PreparedStatement preparedStatement = null;
 		ResultSet resultSet = null;
+		try {
+			preparedStatement = con.prepareStatement(QueryMapper.SELECT_ALL_RM_ORDER);
+			preparedStatement.setString(1, orderId);
+			resultSet = preparedStatement.executeQuery();
 
-		preparedStatement = con.prepareStatement(QueryMapper.SELECT_ALL_RM_ORDER);
-		preparedStatement.setString(1, orderId);
-		resultSet = preparedStatement.executeQuery();
+			while (resultSet.next()) {
+				rmIdFound = true;
+				break;
+			}
 
-		while (resultSet.next()) {
-			rmIdFound = true;
-			break;
+			if (!rmIdFound) {
+				logger.error(Constants.RAWMATERIAL_ID_DOES_NOT_EXISTS_EXCEPTION);
+				throw new RMOrderIDDoesNotExistException(Constants.RAWMATERIAL_ID_DOES_NOT_EXISTS_EXCEPTION);
+			}
+			return rmIdFound;
+		} finally {
+			resultSet.close();
+			preparedStatement.close();
+			con.close();
 		}
 
-		if (!rmIdFound) {
-			logger.error(Constants.RAWMATERIAL_ID_DOES_NOT_EXISTS_EXCEPTION);
-			throw new RMOrderIDDoesNotExistException(Constants.RAWMATERIAL_ID_DOES_NOT_EXISTS_EXCEPTION);
-		}
-
-		con.close();
-		return rmIdFound;
 	}
 
 	@Override
@@ -530,10 +533,10 @@ public class RawMaterialDAOImpl implements RawMaterialDAO {
 			logger.error(e.getMessage());
 			throw new ConnectionException(Constants.CONNECTION_EXCEPTION_MESSAGE_DBCONNECTION_ERROR);
 		}
-		
+
 		PreparedStatement preparedStatement = null;
 		ResultSet resultSet = null;
-
+try {
 		preparedStatement = con.prepareStatement(QueryMapper.SELECT_RMSID_ORDER);
 		preparedStatement.setString(1, name.toUpperCase());
 		resultSet = preparedStatement.executeQuery();
@@ -545,8 +548,6 @@ public class RawMaterialDAOImpl implements RawMaterialDAO {
 				break;
 			}
 		}
-
-		con.close();
 		if (rmIdFound) {
 			return rmIdFound;
 		}
@@ -557,6 +558,13 @@ public class RawMaterialDAOImpl implements RawMaterialDAO {
 
 		return rmIdFound;
 	}
+		finally {
+			resultSet.close();
+			preparedStatement.close();
+		con.close();
+		}
+		
+	}
 
 	@Override
 	public boolean doesRawMaterialOrderIdExistInStock(String orderId)
@@ -565,9 +573,9 @@ public class RawMaterialDAOImpl implements RawMaterialDAO {
 		boolean rmOrderIdFound = false;
 		int oid = -1;
 		try {
-		oid = Integer.parseInt(orderId);
-		} catch(Exception e) {
-			
+			oid = Integer.parseInt(orderId);
+		} catch (Exception e) {
+
 		}
 		Connection con;
 		try {
@@ -577,10 +585,10 @@ public class RawMaterialDAOImpl implements RawMaterialDAO {
 			logger.error(e.getMessage());
 			throw new ConnectionException(Constants.CONNECTION_EXCEPTION_MESSAGE_DBCONNECTION_ERROR);
 		}
-		
+
 		PreparedStatement preparedStatement = null;
 		ResultSet resultSet = null;
-
+try {
 		preparedStatement = con.prepareStatement(QueryMapper.SELECT_RM_STOCK);
 		preparedStatement.setInt(1, oid);
 		resultSet = preparedStatement.executeQuery();
@@ -592,8 +600,6 @@ public class RawMaterialDAOImpl implements RawMaterialDAO {
 				break;
 			}
 		}
-
-		con.close();
 		if (rmOrderIdFound) {
 			return rmOrderIdFound;
 		}
@@ -603,12 +609,18 @@ public class RawMaterialDAOImpl implements RawMaterialDAO {
 		}
 
 		return rmOrderIdFound;
+	}
+		finally {
+			resultSet.close();
+			preparedStatement.close();
+		con.close();
+		}
 		
 	}
 
 	public boolean doesSupplierIdExist(String suppId)
 			throws SupplierIDDoesNotExistException, ConnectionException, SQLException {
-		
+
 		boolean suppIdFound = false;
 		Connection connection;
 		try {
@@ -621,7 +633,7 @@ public class RawMaterialDAOImpl implements RawMaterialDAO {
 
 		PreparedStatement preparedStatement = null;
 		ResultSet resultSet = null;
-
+try {
 		preparedStatement = connection.prepareStatement(QueryMapper.CHECK_IF_SUPPLIERID_EXIST);
 		preparedStatement.setString(1, suppId);
 		resultSet = preparedStatement.executeQuery();
@@ -635,9 +647,13 @@ public class RawMaterialDAOImpl implements RawMaterialDAO {
 			logger.error(Constants.SUPPLIER_ID_DOES_NOT_EXISTS_EXCEPTION);
 			throw new SupplierIDDoesNotExistException(Constants.SUPPLIER_ID_DOES_NOT_EXISTS_EXCEPTION);
 		}
-
-		connection.close();
 		return suppIdFound;
+	}
+		finally {
+			resultSet.close();
+			preparedStatement.close();
+		connection.close();
+		}	
 	}
 
 	public boolean doesRMNameExist(String name) throws RMNameDoesNotExistException, ConnectionException, SQLException {
@@ -653,7 +669,7 @@ public class RawMaterialDAOImpl implements RawMaterialDAO {
 
 		PreparedStatement preparedStatement = null;
 		ResultSet resultSet = null;
-
+try {
 		preparedStatement = connection.prepareStatement(QueryMapper.CHECK_IF_RNAMEID_EXIST);
 		preparedStatement.setString(1, name);
 		resultSet = preparedStatement.executeQuery();
@@ -667,13 +683,18 @@ public class RawMaterialDAOImpl implements RawMaterialDAO {
 			logger.error(Constants.RMNAME_DOES_NOT_EXISTS_EXCEPTION);
 			throw new RMNameDoesNotExistException(Constants.RMNAME_DOES_NOT_EXISTS_EXCEPTION);
 		}
-
-		connection.close();
 		return rmNameFound;
+	}
+		finally {
+		resultSet.close();
+		preparedStatement.close();
+		connection.close();
+		}
+		
 	}
 
 	public boolean doesWIdExist(String wId) throws WIdDoesNotExistException, ConnectionException, SQLException {
-		
+
 		boolean wIdFound = false;
 		Connection connection;
 		try {
@@ -686,7 +707,7 @@ public class RawMaterialDAOImpl implements RawMaterialDAO {
 
 		PreparedStatement preparedStatement = null;
 		ResultSet resultSet = null;
-
+try {
 		preparedStatement = connection.prepareStatement(QueryMapper.CHECK_IF_WID_EXIST);
 		preparedStatement.setString(1, wId);
 		resultSet = preparedStatement.executeQuery();
@@ -700,23 +721,27 @@ public class RawMaterialDAOImpl implements RawMaterialDAO {
 			logger.error(Constants.WID_DOES_NOT_EXISTS_EXCEPTION);
 			throw new WIdDoesNotExistException(Constants.WID_DOES_NOT_EXISTS_EXCEPTION);
 		}
-
-		connection.close();
 		return wIdFound;
+	}
+		finally {
+			resultSet.close();
+			preparedStatement.close();
+		connection.close();
+		}
+		
 	}
 
 	/*******************************************************************************************************
-	 * - Function Name : update raw material stock 
-	 * - Input Parameters : String OrderId, Date manufacturing Date, process Date, string quality status 
-	 * - Return Type : Void 
-	 * - Throws : SQL Exception, Connection Exception 
-	 * - Author : CAPGEMINI 
-	 * - Creation Date : 25/09/2019 
-	 * - Description : updating manufacturing date, process date and quality status into raw material stock table.
+	 * - Function Name : update raw material stock - Input Parameters : String
+	 * OrderId, Date manufacturing Date, process Date, string quality status -
+	 * Return Type : Void - Throws : SQL Exception, Connection Exception - Author :
+	 * CAPGEMINI - Creation Date : 25/09/2019 - Description : updating manufacturing
+	 * date, process date and quality status into raw material stock table.
 	 ********************************************************************************************************/
 	@Override
 	public String updateRMStock(RawMaterialStock rawMaterialStock) throws SQLException, ConnectionException {
 		Connection connection = null;
+		PreparedStatement statement = null, statement1=null, statement2= null;
 		boolean rmOrderinStock = false;
 		try {
 
@@ -725,9 +750,10 @@ public class RawMaterialDAOImpl implements RawMaterialDAO {
 			rmOrderinStock = doesRawMaterialOrderIdExistInStock(rawMaterialStock.getOrderId());
 			if (rmOrderinStock == false) {
 
-				PreparedStatement statementt1 = connection.prepareStatement(QueryMapper.RETRIEVERMORDERDETAILSFORRMSTOCK);
-				statementt1.setInt(1, Integer.parseInt(rawMaterialStock.getOrderId()));
-				ResultSet rs = statementt1.executeQuery();
+				statement1 = connection
+						.prepareStatement(QueryMapper.RETRIEVERMORDERDETAILSFORRMSTOCK);
+				statement1.setInt(1, Integer.parseInt(rawMaterialStock.getOrderId()));
+				ResultSet rs = statement1.executeQuery();
 				String name = null;
 				double priceperunit = 0;
 				double quantityValue = 0;
@@ -746,31 +772,28 @@ public class RawMaterialDAOImpl implements RawMaterialDAO {
 					dateofdelivery = rs.getDate(7);
 				}
 
-				PreparedStatement statementt2 = connection.prepareStatement(QueryMapper.INSERTRMSTOCK);
-				statementt2.setInt(1, Integer.parseInt(rawMaterialStock.getOrderId()));
-				statementt2.setString(2, name);
-				statementt2.setDouble(3, priceperunit);
-				statementt2.setDouble(4, quantityValue);
-				statementt2.setString(5, quantityUnit);
-				statementt2.setDouble(6, totalprice);
-				statementt2.setString(7, warehouseId);
-				statementt2.setDate(8, DBUtil.stringtoDate(dateofdelivery));
+				statement2 = connection.prepareStatement(QueryMapper.INSERTRMSTOCK);
+				statement2.setInt(1, Integer.parseInt(rawMaterialStock.getOrderId()));
+				statement2.setString(2, name);
+				statement2.setDouble(3, priceperunit);
+				statement2.setDouble(4, quantityValue);
+				statement2.setString(5, quantityUnit);
+				statement2.setDouble(6, totalprice);
+				statement2.setString(7, warehouseId);
+				statement2.setDate(8, DBUtil.utilDatetoSQLDate(dateofdelivery));
 
-				statementt2.executeUpdate();
+				statement2.executeUpdate();
 			}
 
-			
-
-			PreparedStatement statementt = connection.prepareStatement(QueryMapper.UPDATERMSTOCK);
-			statementt.setDate(1, DBUtil.stringtoDate(rawMaterialStock.getManufacturingDate()));
-			statementt.setDate(2, DBUtil.stringtoDate(rawMaterialStock.getExpiryDate()));
-			statementt.setString(3, rawMaterialStock.getQualityCheck());
-			statementt.setInt(4, Integer.parseInt(rawMaterialStock.getOrderId()));
-			statementt.executeUpdate();
-			
-
-			connection.close();
+			statement = connection.prepareStatement(QueryMapper.UPDATERMSTOCK);
+			statement.setDate(1, DBUtil.utilDatetoSQLDate(rawMaterialStock.getManufacturingDate()));
+			statement.setDate(2, DBUtil.utilDatetoSQLDate(rawMaterialStock.getExpiryDate()));
+			statement.setString(3, rawMaterialStock.getQualityCheck());
+			statement.setInt(4, Integer.parseInt(rawMaterialStock.getOrderId()));
+			statement.executeUpdate();
 			return Constants.DATA_INSERTED_MESSAGE;
+		
+			
 
 		}
 
@@ -784,18 +807,24 @@ public class RawMaterialDAOImpl implements RawMaterialDAO {
 			logger.error(Constants.LOGGER_ERROR_MESSAGE_DATABASE_NOT_CONNECTED);
 			throw new ConnectionException(Constants.LOGGER_ERROR_MESSAGE_DATABASE_NOT_CONNECTED);
 		}
-	
+		
+		finally {
+			statement.close();
+			statement2.close();
+			statement1.close();
+			connection.close();
+		}
+		
+		
 
 	}
 
 	/*******************************************************************************************************
-	 * - Function Name : process date check 
-	 * - Input Parameters : String orderId, Date process date 
-	 * - Return Type : boolean 
-	 * - Throws : SQLException, ConnectionException, ProcessDateException 
-	 * - Author : CAPGEMINI 
-	 * - Creation Date : 25/09/2019 
-	 * - Description : checking that process_date should be after delivery_date and before expiry_date.
+	 * - Function Name : process date check - Input Parameters : String orderId,
+	 * Date process date - Return Type : boolean - Throws : SQLException,
+	 * ConnectionException, ProcessDateException - Author : CAPGEMINI - Creation
+	 * Date : 25/09/2019 - Description : checking that process_date should be after
+	 * delivery_date and before expiry_date.
 	 ********************************************************************************************************/
 
 	@Override
@@ -804,37 +833,39 @@ public class RawMaterialDAOImpl implements RawMaterialDAO {
 		Connection connection = null;
 		boolean datecheck = false;
 
+		ResultSet resultSet= null;
+		PreparedStatement statement = null;
 		try {
 			try {
 				connection = DBUtil.getInstance().getConnection();
 			} catch (Exception e) {
 				throw new ConnectionException(Constants.CONNECTION_EXCEPTION_MESSAGE_DBCONNECTION_ERROR);
 			}
-			PreparedStatement stmt = connection.prepareStatement(QueryMapper.CHECKPROCESSDATE);
-			stmt.setInt(1, Integer.parseInt(rawMaterialStock.getOrderId()));
+			statement  = connection.prepareStatement(QueryMapper.CHECKPROCESSDATE);
+			statement.setInt(1, Integer.parseInt(rawMaterialStock.getOrderId()));
 
-			ResultSet rs = stmt.executeQuery();
-			
+			resultSet = statement.executeQuery();
 
 			java.sql.Date deliveryDate = null;
 			java.sql.Date expiryDate = null;
 
-			while (rs.next()) {
+			while (resultSet.next()) {
 
-				deliveryDate = rs.getDate(1);
-				
-				expiryDate = rs.getDate(2);
+				deliveryDate = resultSet.getDate(1);
+
+				expiryDate = resultSet.getDate(2);
 
 				if (rawMaterialStock.getProcessDate().after(deliveryDate)
 						&& rawMaterialStock.getProcessDate().before(expiryDate)) {
 					datecheck = true;
 					return datecheck;
 				}
-					
+
 				else
 					throw new ProcessDateException(Constants.PROCESS_DATE_EXCEPTION_MESSAGE);
 
 			}
+			return datecheck;
 
 		} catch (SQLException e) {
 			logger.error(Constants.LOGGER_ERROR_MESSAGE_QUERY_NOT_EXECUTED);
@@ -847,34 +878,37 @@ public class RawMaterialDAOImpl implements RawMaterialDAO {
 			throw e;
 
 		}
+		finally {
+			resultSet.close();
+			statement.close();
+			connection.close();
+		}
 
-		return datecheck;
+		
 
 	}
 
 	/*******************************************************************************************************
-	 * - Function Name : update process_date in Stock 
-	 * - Input Parameters : String orderId, Date Process_date 
-	 * - Return Type : void 
-	 * - Throws : No Exception 
-	 * - Author : CAPGEMINI 
-	 * - Creation Date : 25/09/2019 
-	 * - Description : updating process date for an orderId in the Raw Material Stock table.
+	 * - Function Name : update process_date in Stock - Input Parameters : String
+	 * orderId, Date Process_date - Return Type : void - Throws : No Exception -
+	 * Author : CAPGEMINI - Creation Date : 25/09/2019 - Description : updating
+	 * process date for an orderId in the Raw Material Stock table.
 	 ********************************************************************************************************/
 
 	@Override
 	public String updateProcessDateinStock(RawMaterialStock rawMaterialStock) {
 		Connection connection = null;
+		PreparedStatement statement = null;
 		try {
 
 			connection = DBUtil.getInstance().getConnection();
 
-			PreparedStatement stmt = connection.prepareStatement(QueryMapper.UPDATEPROCESSDATE);
-			stmt.setDate(1, DBUtil.stringtoDate(rawMaterialStock.getProcessDate()));
-			stmt.setInt(2, Integer.parseInt(rawMaterialStock.getOrderId()));
-			stmt.executeUpdate();
+			statement  = connection.prepareStatement(QueryMapper.UPDATEPROCESSDATE);
+			statement.setDate(1, DBUtil.utilDatetoSQLDate(rawMaterialStock.getProcessDate()));
+			statement.setInt(2, Integer.parseInt(rawMaterialStock.getOrderId()));
+			statement.executeUpdate();
 
-			connection.close();
+			
 			return Constants.DATA_INSERTED_MESSAGE;
 
 		}
@@ -887,46 +921,54 @@ public class RawMaterialDAOImpl implements RawMaterialDAO {
 			logger.info(Constants.LOGGER_ERROR_MESSAGE_DATABASE_NOT_CONNECTED);
 			return Constants.LOGGER_ERROR_MESSAGE_DATABASE_NOT_CONNECTED;
 		}
+		
+		finally {
+			try {
+				statement.close();
+				connection.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				logger.error(e.getMessage());
+			}
+			
+		}
 
 	}
 
 	/*******************************************************************************************************
-	 * - Function Name : Track raw material order 
-	 * - Input Parameters : String orderId 
-	 * - Return Type : String 
-	 * - Throws : No Exception 
-	 * - Author : CAPGEMINI 
-	 * - Creation Date : 23/09/2019 
-	 * - Description : Raw Material order is tracked in the warehouse along with its shelf life
+	 * - Function Name : Track raw material order - Input Parameters : String
+	 * orderId - Return Type : String - Throws : No Exception - Author : CAPGEMINI -
+	 * Creation Date : 23/09/2019 - Description : Raw Material order is tracked in
+	 * the warehouse along with its shelf life
 	 ********************************************************************************************************/
 
 	@Override
 	public String trackRawMaterialOrder(RawMaterialStock rawMaterialStock) {
 		Connection connection = null;
+		ResultSet resultSet = null;
+		PreparedStatement statement = null;
 		try {
 
 			connection = DBUtil.getInstance().getConnection();
 
-			PreparedStatement stmt = connection.prepareStatement(QueryMapper.TRACKRMORDER);
-			stmt.setInt(1, Integer.parseInt(rawMaterialStock.getOrderId()));
-			ResultSet rs = stmt.executeQuery();
-			
+			statement  = connection.prepareStatement(QueryMapper.TRACKRMORDER);
+			statement.setInt(1, Integer.parseInt(rawMaterialStock.getOrderId()));
+			resultSet = statement.executeQuery();
 
 			String warehouseId = null;
 			java.sql.Date processDate = null;
 			java.sql.Date deliveryDate = null;
 
-			while (rs.next()) {
+			while (resultSet.next()) {
 
-				processDate = rs.getDate(1);
-				
-				deliveryDate = rs.getDate(2);
-				
-				warehouseId = rs.getString(3);
-				
+				processDate = resultSet.getDate(1);
+
+				deliveryDate = resultSet.getDate(2);
+
+				warehouseId = resultSet.getString(3);
+
 			}
 
-	
 			String message = "The order ID had been in the warehouse with warehouseID = " + warehouseId + " from "
 					+ deliveryDate.toString() + " to " + processDate.toString() + "("
 					+ DBUtil.diffBetweenDays(processDate, deliveryDate) + " days)";
@@ -941,6 +983,8 @@ public class RawMaterialDAOImpl implements RawMaterialDAO {
 			return Constants.LOGGER_ERROR_MESSAGE_DATABASE_NOT_CONNECTED;
 		} finally {
 			try {
+				resultSet.close();
+				statement.close();
 				connection.close();
 			} catch (SQLException e) {
 				logger.error(e.getMessage());

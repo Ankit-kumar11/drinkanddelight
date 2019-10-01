@@ -22,6 +22,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="C:/Program Files/Java/jdk1.8.0_131/javafx-src.zip"/>
 	<classpathentry exported="true" kind="lib" path="C:/Program Files/Java/jdk1.8.0_131"/>
-	<classpathentry kind="lib" path="C:/Users/akum1031/mysql-connector-java-8.0.17/mysql-connector-java-8.0.17/mysql-connector-java-8.0.17.jar"/>
+	<classpathentry kind="lib" path="C:/Users/gauragai/Downloads/mysql-connector-java-8.0.17/mysql-connector-java-8.0.17.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

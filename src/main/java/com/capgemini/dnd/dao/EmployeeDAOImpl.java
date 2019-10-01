@@ -42,7 +42,7 @@ public class EmployeeDAOImpl implements EmployeeDAO {
 		try {
 			preparedStatement1 = connection.prepareStatement(QueryMapper.INSERT_ONE_EMPLOYEE);
 			preparedStatement1.setString(2, employee.getEmpName());
-			preparedStatement1.setDate(3, employee.getDob());
+			preparedStatement1.setDate(3, DBUtil.utilDatetoSQLDate(employee.getDob()));
 			preparedStatement1.setString(4, employee.getEmailId());
 			preparedStatement1.setString(5, "" + Character.toUpperCase(employee.getGender().charAt(0)));
 			preparedStatement1.setString(6, employee.getDesignation());
@@ -78,6 +78,9 @@ public class EmployeeDAOImpl implements EmployeeDAO {
 			throw new RowNotAddedException(Constants.EMPLOYEE_LOGGER_ERROR_ROW_ADDTION_FAILED + exception.getMessage());
 		} finally {
 			try {
+				resultSet.close();
+				preparedStatement1.close();
+				preparedStatement2.close();
 				connection.close();
 			} catch (SQLException exception) {
 				logger.error(exception.getMessage());
@@ -125,6 +128,8 @@ public class EmployeeDAOImpl implements EmployeeDAO {
 			throw new BackEndException(Constants.EMPLOYEE_LOGGER_ERROR_FETCHING_FAILED + exception.getMessage());
 		} finally {
 			try {
+				resultSet.close();
+				preparedStatement.close();
 				connection.close();
 			} catch (SQLException exception) {
 				logger.error(exception.getMessage());
@@ -160,6 +165,7 @@ public class EmployeeDAOImpl implements EmployeeDAO {
 			throw new BackEndException(Constants.EMPLOYEE_LOGGER_ERROR_FETCHING_FAILED + exception.getMessage());
 		} finally {
 			try {
+				preparedStatement.close();
 				connection.close();
 			} catch (SQLException exception) {
 				logger.error(exception.getMessage());
@@ -219,6 +225,8 @@ public class EmployeeDAOImpl implements EmployeeDAO {
 			throw new BackEndException(Constants.EMPLOYEE_LOGGER_ERROR_FETCHING_FAILED + exception.getMessage());
 		} finally {
 			try {
+				
+				preparedStatement.close();
 				connection.close();
 			} catch (SQLException exception) {
 				logger.error(exception.getMessage());
@@ -270,6 +278,8 @@ public class EmployeeDAOImpl implements EmployeeDAO {
 			throw new BackEndException(Constants.EMPLOYEE_LOGGER_ERROR_FETCHING_FAILED + exception.getMessage());
 		} finally {
 			try {
+				resultSet.close();
+				preparedStatement.close();
 				connection.close();
 			} catch (SQLException exception) {
 				logger.error(exception.getMessage());
@@ -306,6 +316,8 @@ public class EmployeeDAOImpl implements EmployeeDAO {
 			throw new BackEndException(Constants.EMPLOYEE_LOGGER_ERROR_FETCHING_FAILED + exception.getMessage());
 		} finally {
 			try {
+				
+				preparedStatement.close();
 				connection.close();
 			} catch (SQLException exception) {
 				logger.error(exception.getMessage());
@@ -340,25 +352,25 @@ public class EmployeeDAOImpl implements EmployeeDAO {
 								employee.setPassword(newPassword);
 								result = employeeDAO.setPassword(employee);
 							} else {
-								logger.error("Passwords do not match!!!");
-								throw new PasswordException("Passwords do not match!!!");
+								logger.error(Constants.LOGGER_ERROR_MESSAGE_PASSWORD_MISMATCH);
+								throw new PasswordException(Constants.LOGGER_ERROR_MESSAGE_PASSWORD_MISMATCH);
 							}
 						} else {
-							logger.error("New password matches with old password!!!");
-							throw new PasswordException("New password matches with old password!!!");
+							logger.error(Constants.LOGGER_ERROR_MESSAGE_PASSWORD_UNCHANGED);
+							throw new PasswordException(Constants.LOGGER_ERROR_MESSAGE_PASSWORD_UNCHANGED);
 						}
 					} else {
-						logger.error("Password can't be empty or just spaces!!!");
-						throw new PasswordException("Password can't be empty or just spaces!!!");
+						logger.error(Constants.LOGGER_ERROR_MESSAGE_PASSWORD_EMPTY);
+						throw new PasswordException(Constants.LOGGER_ERROR_MESSAGE_PASSWORD_EMPTY);
 					}
 				} else {
-					logger.error("Answer to security question is wrong!!!");
-					throw new WrongSecurityAnswerException("Answer to security question is wrong!!!");
+					logger.error(Constants.LOGGER_ERROR_MESSAGE_WRONG_ANSWER);
+					throw new WrongSecurityAnswerException(Constants.LOGGER_ERROR_MESSAGE_WRONG_ANSWER);
 				}
 			}
 		} catch (RowNotFoundException exception) {
-			logger.error("You are not a registered user!!!");
-			throw new UnregisteredEmployeeException("You are not a registered user!!!");
+			logger.error(Constants.LOGGER_ERROR_MESSAGE_UNREGISTERED_USER);
+			throw new UnregisteredEmployeeException(Constants.LOGGER_ERROR_MESSAGE_UNREGISTERED_USER);
 		}
 		return result;
 	}
@@ -395,6 +407,8 @@ public class EmployeeDAOImpl implements EmployeeDAO {
 			throw new BackEndException(Constants.EMPLOYEE_LOGGER_ERROR_FETCHING_FAILED + exception.getMessage());
 		} finally {
 			try {
+				resultSet.close();
+				preparedStatement.close();
 				connection.close();
 			} catch (SQLException exception) {
 				logger.error(exception.getMessage());
