@@ -1,3 +1,4 @@
 MANIFEST.MF
 *.class
 drinkanddelight.log
+/target/

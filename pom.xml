@@ -8,23 +8,6 @@
 	<packaging>war</packaging>
 	<name>App for drink&amp;delight</name>
 	<description>project for drink&amp;delight</description>
-
-	<build>
-	
-		<plugins>
-
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-war-plugin</artifactId>
-				<version>2.6</version>
-				<configuration>
-					<failOnMissingWebXml>false</failOnMissingWebXml>
-				</configuration>
-			</plugin>
-
-		</plugins>
-	</build>
-	
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.target>1.8</maven.compiler.target>
@@ -56,17 +39,23 @@
 			<version>1.5.2</version>
 			<scope>test</scope>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
 			<version>8.0.17</version>
 		</dependency>
 		<dependency>
-    <groupId>log4j</groupId>
-    <artifactId>log4j</artifactId>
-    <version>1.2.17</version>
-</dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.17</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.apache.tomcat.embed/tomcat-embed-core -->
+		<dependency>
+			<groupId>org.apache.tomcat.embed</groupId>
+			<artifactId>tomcat-embed-core</artifactId>
+			<version>9.0.26</version>
+		</dependency>
 
 	</dependencies>
 </project>
