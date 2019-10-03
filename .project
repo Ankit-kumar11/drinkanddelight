@@ -34,11 +34,4 @@
 		<nature>org.eclipse.wst.common.project.facet.core.nature</nature>
 		<nature>org.eclipse.wst.jsdt.core.jsNature</nature>
 	</natures>
-	<linkedResources>
-		<link>
-			<name>lib/mysql-connector-java-8.0.17.jar</name>
-			<type>1</type>
-			<location>C:/Users/akum1031/mysql-connector-java-8.0.17/mysql-connector-java-8.0.17/mysql-connector-java-8.0.17.jar</location>
-		</link>
-	</linkedResources>
 </projectDescription>

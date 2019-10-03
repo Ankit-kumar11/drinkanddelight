@@ -1,5 +1,6 @@
 package com.capgemini.dnd.dao;
 
+import java.io.File;
 import java.sql.*;
 import java.util.Scanner;
 
@@ -16,13 +17,16 @@ import com.capgemini.dnd.customexceptions.WrongPasswordException;
 import com.capgemini.dnd.customexceptions.WrongSecurityAnswerException;
 import com.capgemini.dnd.dto.Employee;
 import com.capgemini.dnd.util.DBUtil;
+import com.capgemini.dnd.util.Log4JManager;
 
 public class EmployeeDAOImpl implements EmployeeDAO {
 	private EmployeeDAO employeeDAO;
 	private Logger logger = Logger.getRootLogger();
 
 	public EmployeeDAOImpl() {
-		PropertyConfigurator.configure("resources//log4j.properties");
+		System.out.println("PWD = " + new File(".").getAbsolutePath());
+		// PropertyConfigurator.configure("resources//log4j.properties");
+		//Log4JManager.initProps();
 	}
 
 	public boolean addEmployee(Employee employee) throws BackEndException, RowNotAddedException {

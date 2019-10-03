@@ -29,7 +29,7 @@ public class RawMaterialDAOImpl implements RawMaterialDAO {
 	Logger logger = Logger.getRootLogger();
 
 	public RawMaterialDAOImpl() {
-		PropertyConfigurator.configure("resources//log4j.properties");
+		//PropertyConfigurator.configure("resources//log4j.properties");
 
 	}
 	/*

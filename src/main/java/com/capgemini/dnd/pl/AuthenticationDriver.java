@@ -1,5 +1,6 @@
 package com.capgemini.dnd.pl;
 
+import java.io.File;
 import java.sql.Date;
 import java.util.Scanner;
 
@@ -14,11 +15,13 @@ import com.capgemini.dnd.dto.Employee;
 import com.capgemini.dnd.service.EmployeeService;
 import com.capgemini.dnd.service.EmployeeServiceImpl;
 import com.capgemini.dnd.util.InputValidator;
+import com.capgemini.dnd.util.Log4JManager;
 
 public class AuthenticationDriver {
 	static Logger logger=Logger.getRootLogger();
 	public AuthenticationDriver() {
-		PropertyConfigurator.configure("resources//log4j.properties");
+		System.out.println("PWD = " + new File(".").getAbsolutePath());
+		Log4JManager.initProps();
 	}
 	public static void viewMenu() {
 		System.out.println("Drink and Delight Login/Register Page ----------------------");

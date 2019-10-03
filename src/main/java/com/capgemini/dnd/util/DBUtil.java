@@ -1,5 +1,6 @@
 package com.capgemini.dnd.util;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -84,11 +85,14 @@ public class DBUtil {
 
 		if (props == null) {
 			Properties newProps = new Properties();
-			String fileName = "resources/jdbc.properties";
-
-			InputStream inputStream = new FileInputStream(fileName);
-			newProps.load(inputStream);
-
+			
+//			StringBuilder pwdPath = new StringBuilder(new File(".").getAbsolutePath());			
+//			String fileName = "C:\\Users\\akum1031\\eclipse-workspace\\drinkanddelight\\src\\main\\resources\\jdbc.properties";
+			
+			String fileName = DBUtil.class.getClassLoader().getResource("").getPath()+"/jdbc.properties";
+            InputStream inputStream = new FileInputStream(fileName);
+            newProps.load(inputStream);
+            
 			inputStream.close();
 
 			return newProps;
