@@ -5,7 +5,11 @@ import java.sql.SQLException;
 //import java.sql.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Scanner;
 
 import org.apache.log4j.PropertyConfigurator;
@@ -18,7 +22,9 @@ import com.capgemini.dnd.customexceptions.ExpiryDateException;
 import com.capgemini.dnd.customexceptions.ProductOrderIDDoesNotExistException;
 import com.capgemini.dnd.customexceptions.RMOrderIDDoesNotExistException;
 import com.capgemini.dnd.customexceptions.SupplierIDDoesNotExistException;
+import com.capgemini.dnd.dto.ProductOrder;
 import com.capgemini.dnd.dto.ProductStock;
+import com.capgemini.dnd.dto.RawMaterialOrder;
 import com.capgemini.dnd.dto.RawMaterialStock;
 import com.capgemini.dnd.service.EmployeeService;
 import com.capgemini.dnd.service.EmployeeServiceImpl;
@@ -35,8 +41,8 @@ public class TertiaryMenuDriver {
 	static Logger logger = Logger.getRootLogger();
 
 	public TertiaryMenuDriver() {
-		PropertyConfigurator.configure("resources//log4j.properties");
-
+//		PropertyConfigurator.configure("resources//log4j.properties");
+		ProductService productServiceObject = new ProductServiceImpl();
 	}
 
 	public static void displayRawMaterialOrders() throws Exception {
@@ -45,6 +51,9 @@ public class TertiaryMenuDriver {
 		EmployeeService employeeService = new EmployeeServiceImpl();
 		RawMaterialService rawMaterialServiceObject = new RawMaterialServiceImpl();
 		String DIGITS_ONLY_REGEX = "[0-9]+";
+		int choice = 0;
+		String stringChoice;
+		boolean validChoiceType;
 		while (true) {
 			System.out.println("-----------DISPLAY RAW MATERIALS MENU---------- ");
 			System.out.println("Choose one of the following: ");
@@ -56,9 +65,9 @@ public class TertiaryMenuDriver {
 			System.out.println("6. display orders from a supplier");
 			System.out.println("7. Go to secondary menu");
 			System.out.println("0. Exit");
-			int choice = 0;
-			String stringChoice;
-			boolean validChoiceType = false;
+			
+			 validChoiceType = false;
+
 			while (!validChoiceType) {
 				stringChoice = scanner.nextLine();
 				if (stringChoice.matches(DIGITS_ONLY_REGEX)) {
@@ -80,46 +89,68 @@ public class TertiaryMenuDriver {
 			}
 
 			if (choice == 1) {
-				rawMaterialServiceObject.displayRawMaterialOrderDetails();
+				List<RawMaterialOrder> rmoList = new ArrayList<RawMaterialOrder>();
+				rmoList = rawMaterialServiceObject.displayRawMaterialOrderDetails();
+				for (RawMaterialOrder rawmaterialorder : rmoList)
+				System.out.println(rawmaterialorder);
 			}
 
 			else if (choice == 2) {
 
-				rawMaterialServiceObject.displayPendingRawMaterialOrderDetails();
+				List<RawMaterialOrder> rmoList = new ArrayList<RawMaterialOrder>();
+				rmoList = rawMaterialServiceObject.displayPendingRawMaterialOrderDetails();
+				for (RawMaterialOrder rawmaterialorder : rmoList)
+				System.out.println(rawmaterialorder);
 			} else if (choice == 3) {
 
-				rawMaterialServiceObject.displayCancelledRawMaterialOrderDetails();
+				List<RawMaterialOrder> rmoList = new ArrayList<RawMaterialOrder>();
+				rmoList = rawMaterialServiceObject.displayCancelledRawMaterialOrderDetails();
+				for (RawMaterialOrder rawmaterialorder : rmoList)
+				System.out.println(rawmaterialorder);
 
 			} else if (choice == 4) {
 
-				rawMaterialServiceObject.displayReceivedRawMaterialOrderDetails();
+				List<RawMaterialOrder> rmoList = new ArrayList<RawMaterialOrder>();
+				rmoList = rawMaterialServiceObject.displayReceivedRawMaterialOrderDetails();
+				for (RawMaterialOrder rawmaterialorder : rmoList)
+				System.out.println(rawmaterialorder);
 
 			} else if (choice == 5) {
 				Date dt1 = null, dt2 = null;
+				LocalDate date = LocalDate.now();
+				Date today = Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant());
+				
 				System.out.println("enter date 1");
-				String s1 = scanner.next();
+				String s1 = scanner.nextLine();
 				try {
 					dt1 = sdf.parse(s1);
+					
+					
 				} catch (ParseException e) {
 					System.err.println(e.getMessage());
 				}
-
-				String s2 = scanner.next();
+				System.out.println("enter date 2");
+				String s2 = scanner.nextLine();
 				;
 				try {
 					dt2 = sdf.parse(s2);
 				} catch (ParseException e) {
 					System.err.println(e.getMessage());
 				}
-
-				rawMaterialServiceObject.displayRawmaterialOrdersbetweenDetails(dt1, dt2);
+				List<RawMaterialOrder> rmoList = new ArrayList<RawMaterialOrder>();
+				rmoList = rawMaterialServiceObject.displayRawMaterialOrderDetails();
+				for (RawMaterialOrder rawmaterialorder : rmoList)
+				System.out.println(rawmaterialorder);
 			} else if (choice == 6) {
 				while (true) {
 					System.out.print("enter supplier id: ");
-					String supid = scanner.next();
+					String supid = scanner.nextLine();
 
 					try {
-						rawMaterialServiceObject.displayOrdersFromSupplier(supid);
+						List<RawMaterialOrder> rmoList = new ArrayList<RawMaterialOrder>();
+						rmoList = rawMaterialServiceObject.displayOrdersFromSupplier(supid);
+						for (RawMaterialOrder rawmaterialorder : rmoList)
+						System.out.println(rawmaterialorder);
 						break;
 					} catch (SupplierIDDoesNotExistException e) {
 						System.err.println(e.getMessage());
@@ -147,9 +178,12 @@ public class TertiaryMenuDriver {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		EmployeeService employeeService = new EmployeeServiceImpl();
 		ProductService productServiceObject = new ProductServiceImpl();
+		int choice = 0;
+		String stringChoice;
+		boolean validChoiceType;
 		String DIGITS_ONLY_REGEX = "[0-9]+";
-        while (true) {
-        	System.out.println("-----------DISPLAY PRODUCTS MENU---------- ");
+		while (true) {
+			System.out.println("-----------DISPLAY PRODUCTS MENU---------- ");
 			System.out.println("Choose one of the following: ");
 			System.out.println("1. All orders ");
 			System.out.println("2. Dispatched orders");
@@ -160,69 +194,89 @@ public class TertiaryMenuDriver {
 			System.out.println("7. display orders from a distributor");
 			System.out.println("8. Go to secondary menu");
 			System.out.println("0. Exit");
-            int choice = 0;
-            String stringChoice;
-            boolean validChoiceType = false;
-            while (!validChoiceType) {
-                stringChoice=scanner.nextLine();
-                if(stringChoice.matches(DIGITS_ONLY_REGEX)) {
-                    validChoiceType = true;
-                    choice=Integer.parseInt(stringChoice);
-                }
-                else {
-                    System.err.println("Type of choice entered is wrong!!! Enter a valid number!!!");
-                    System.out.println("-----------DISPLAY PRODUCTS MENU---------- ");
-        			System.out.println("Choose one of the following: ");
-        			System.out.println("1. All orders ");
-        			System.out.println("2. Dispatched orders");
-        			System.out.println("3. Pending orders");
-        			System.out.println("4. Received orders");
-        			System.out.println("5. Cancelled orders");
-        			System.out.println("6. display orders between two dates");
-        			System.out.println("7. display orders from a distributor");
-        			System.out.println("8. Go to secondary menu");
-        			System.out.println("0. Exit");
-                }
-            }
-			if (choice == 1) {
 
-				productServiceObject.displayProductOrderDetails();
+			validChoiceType = false;
+			while (!validChoiceType) {
+				stringChoice = scanner.nextLine();
+				if (stringChoice.matches(DIGITS_ONLY_REGEX)) {
+					validChoiceType = true;
+					choice = Integer.parseInt(stringChoice);
+				} else {
+					System.err.println("Type of choice entered is wrong!!! Enter a valid number!!!");
+					System.out.println("-----------DISPLAY PRODUCTS MENU---------- ");
+					System.out.println("Choose one of the following: ");
+					System.out.println("1. All orders ");
+					System.out.println("2. Dispatched orders");
+					System.out.println("3. Pending orders");
+					System.out.println("4. Received orders");
+					System.out.println("5. Cancelled orders");
+					System.out.println("6. display orders between two dates");
+					System.out.println("7. display orders from a distributor");
+					System.out.println("8. Go to secondary menu");
+					System.out.println("0. Exit");
+				}
+			}
+			if (choice == 1) {
+				List<ProductOrder> poList = new ArrayList<ProductOrder>();
+				poList = productServiceObject.displayProductOrderDetails();
+				for (ProductOrder productOrder : poList)
+					System.out.println(productOrder);
+
 			} else if (choice == 2) {
 
-				productServiceObject.displayDispatchedProductOrderDetails();
+				List<ProductOrder> poList = new ArrayList<ProductOrder>();
+				poList = productServiceObject.displayDispatchedProductOrderDetails();
+				for (ProductOrder productOrder : poList)
+					System.out.println(productOrder);
 
 			} else if (choice == 3) {
+				List<ProductOrder> poList = new ArrayList<ProductOrder>();
+				poList = productServiceObject.displayPendingProductOrderDetails();
+				for (ProductOrder productOrder : poList)
+					System.out.println(productOrder);
 
-				productServiceObject.displayPendingProductOrderDetails();
 			} else if (choice == 4) {
-
-				productServiceObject.displayReceivedProductOrderDetails();
+				List<ProductOrder> poList = new ArrayList<ProductOrder>();
+				poList = productServiceObject.displayReceivedProductOrderDetails();
+				for (ProductOrder productOrder : poList)
+					System.out.println(productOrder);
 
 			} else if (choice == 5) {
-				productServiceObject.displayCancelledProductOrderDetails();
+				List<ProductOrder> poList = new ArrayList<ProductOrder>();
+				poList = productServiceObject.displayCancelledProductOrderDetails();
+				for (ProductOrder productOrder : poList)
+					System.out.println(productOrder);
+
 			} else if (choice == 6) {
+				List<ProductOrder> poList = new ArrayList<ProductOrder>();
+
 				Date dt1 = null, dt2 = null;
 				System.out.println("enter date 1");
-				String s1 = scanner.next();
+				String s1 = scanner.nextLine();
 				try {
 					dt1 = sdf.parse(s1);
 				} catch (ParseException e) {
 					System.err.println(e.getMessage());
 				}
-
-				String s2 = scanner.next();
-				;
+				System.out.println("enter date 2");
+				String s2 = scanner.nextLine();
 				try {
 					dt2 = sdf.parse(s2);
 				} catch (ParseException e) {
 					System.err.println(e.getMessage());
 				}
+				poList = productServiceObject.displayProductOrderbetweenDetails(dt1, dt2);
+				for (ProductOrder productOrder : poList)
+					System.out.println(productOrder);
 
-				productServiceObject.displayProductOrderbetweenDetails(dt1, dt2);
 			} else if (choice == 7) {
+				List<ProductOrder> poList = new ArrayList<ProductOrder>();
 				System.out.println("enter distributor id");
-				String distId = scanner.next();
-				productServiceObject.displayOrdersFromDistributor(distId);
+				String distId = scanner.nextLine();
+
+				poList = productServiceObject.displayOrdersFromDistributor(distId);
+				for (ProductOrder productOrder : poList)
+					System.out.println(productOrder);
 
 			} else if (choice == 8) {
 
@@ -312,7 +366,7 @@ public class TertiaryMenuDriver {
 				doesRMOrderIDexist = rawMaterialServiceObject.doesRawMaterialOrderIdExist(id);
 			} catch (RMOrderIDDoesNotExistException | ConnectionException | SQLException e) {
 				logger.error(e.getMessage());
-				
+
 			}
 
 			Date manufacturing_date = null;

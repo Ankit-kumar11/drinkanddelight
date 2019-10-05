@@ -3,6 +3,7 @@ package com.capgemini.dnd.service;
 
 import java.sql.SQLException;
 import java.util.Date;
+import java.util.List;
 
 import com.capgemini.dnd.customexceptions.ConnectionException;
 import com.capgemini.dnd.customexceptions.ExpiryDateException;
@@ -23,20 +24,20 @@ public class RawMaterialServiceImpl implements RawMaterialService {
 
 	RawMaterialDAO rmdi = new RawMaterialDAOImpl();
 
-	public void displayRawMaterialOrderDetails() throws Exception {
-		rmdi.displayRawMaterialOrderDetails();
+	public List<RawMaterialOrder> displayRawMaterialOrderDetails() throws Exception {
+		return rmdi.displayRawMaterialOrderDetails();
 	}
 
-	public void displayPendingRawMaterialOrderDetails() throws Exception {
-		rmdi.displayPendingRawMaterialOrderDetails();
+	public List<RawMaterialOrder> displayPendingRawMaterialOrderDetails() throws Exception {
+		return rmdi.displayPendingRawMaterialOrderDetails();
 	}
 
-	public void displayCancelledRawMaterialOrderDetails() throws Exception {
-		rmdi.displayCancelledRawMaterialOrderDetails();
+	public List<RawMaterialOrder> displayCancelledRawMaterialOrderDetails() throws Exception {
+		return rmdi.displayCancelledRawMaterialOrderDetails();
 	}
 
-	public void displayReceivedRawMaterialOrderDetails() throws Exception {
-		rmdi.displayReceivedRawMaterialOrderDetails();
+	public List<RawMaterialOrder> displayReceivedRawMaterialOrderDetails() throws Exception {
+		return rmdi.displayReceivedRawMaterialOrderDetails();
 	}
 
 	public String placeRawMaterialOrder(RawMaterialOrder newRawMaterialOrder) throws Exception {
@@ -49,12 +50,12 @@ public class RawMaterialServiceImpl implements RawMaterialService {
 		return (rmdi.updateStatusRawMaterialOrder(orderId, newStatus));
 	}
 
-	public void displayOrdersFromSupplier(String supid) throws Exception {
-		rmdi.displayOrdersFromSupplier(supid);
+	public List<RawMaterialOrder> displayOrdersFromSupplier(String supid) throws Exception {
+		return rmdi.displayOrdersFromSupplier(supid);
 	}
 
-	public void displayRawmaterialOrdersbetweenDetails(Date dt1, Date dt2) throws Exception {
-		rmdi.displayRawmaterialOrdersbetweenDetails(dt1, dt2);
+	public List<RawMaterialOrder> displayRawmaterialOrdersbetweenDetails(Date dt1, Date dt2) throws Exception {
+		return rmdi.displayRawmaterialOrdersbetweenDetails(dt1, dt2);
 	}
 
 	public boolean doesRawMaterialOrderIdExist(String orderId)

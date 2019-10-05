@@ -2,6 +2,7 @@ package com.capgemini.dnd.service;
 
 import java.sql.SQLException;
 import java.util.Date;
+import java.util.List;
 import java.util.Scanner;
 
 import com.capgemini.dnd.customexceptions.ConnectionException;
@@ -28,36 +29,36 @@ public class ProductServiceImpl implements ProductService {
 		return pdi.updateStatusProductOrder(oid, newStatus);
 	}
 
-	public void displayProductOrderDetails() throws Exception {
-		pdi.displayProductOrderDetails();
+	public List<ProductOrder> displayProductOrderDetails() throws Exception {
+		return pdi.displayProductOrderDetails();
 	}
 
-	public void displayPendingProductOrderDetails() throws Exception {
-		pdi.displayPendingProductOrderDetails();
+	public List<ProductOrder> displayPendingProductOrderDetails() throws Exception {
+		return pdi.displayPendingProductOrderDetails(); 
 	}
 
-	public void displayReceivedProductOrderDetails() throws Exception {
-		pdi.displayReceivedProductOrderDetails();
+	public List<ProductOrder> displayReceivedProductOrderDetails() throws Exception {
+		return pdi.displayReceivedProductOrderDetails();
 	}
 
-	public void displayCancelledProductOrderDetails() throws Exception {
-		pdi.displayCancelledProductOrderDetails();
+	public  List<ProductOrder> displayCancelledProductOrderDetails() throws Exception {
+		return pdi.displayCancelledProductOrderDetails();
 	}
 
-	public void displayDispatchedProductOrderDetails() throws Exception {
-		pdi.displayDispatchedProductOrderDetails();
+	public List<ProductOrder> displayDispatchedProductOrderDetails() throws Exception {
+		return pdi.displayDispatchedProductOrderDetails();
 	}
 
-	public void displayProductOrderbetweenDetails(Date dt1, Date dt2) throws Exception {
-		pdi.displayProductOrderbetweenDetails(dt1, dt2);
+	public List<ProductOrder> displayProductOrderbetweenDetails(Date dt1, Date dt2) throws Exception {
+		return pdi.displayProductOrderbetweenDetails(dt1,dt2);
 	}
 
 	public String placeProductOrder(ProductOrder newProductOrder) throws Exception {
 		return (pdi.addProductOrder(newProductOrder));
 	}
 
-	public void displayOrdersFromDistributor(String distId) throws Exception {
-		pdi.displayOrdersFromDistributor(distId);
+	public List<ProductOrder> displayOrdersFromDistributor(String distId) throws Exception {
+		return pdi.displayOrdersFromDistributor(distId);
 	}
 
 	public boolean doesProductNameExist(String name)

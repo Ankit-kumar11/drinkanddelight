@@ -7,8 +7,21 @@ import java.util.Date;
  
 
 public class ProductOrder {
-    private String orderId;
-    private static int orderIdCount = 1;
+    @Override
+	public String toString() {
+		return "ProductOrder [orderId=" + orderId + ", name=" + name + ", pid=" + pid + ", distributorId="
+				+ distributorId + ", quantityValue=" + quantityValue + ", quantityUnit=" + quantityUnit
+				+ ", dateOfOrder=" + dateOfOrder + ", dateofDelivery=" + dateofDelivery + ", pricePerUnit="
+				+ pricePerUnit + ", totalPrice=" + totalPrice + ", deliveryStatus=" + deliveryStatus + ", warehouseId="
+				+ warehouseId + "]";
+	}
+
+
+
+	private String orderId;
+    
+
+	private static int orderIdCount = 1;
     private String name;
     private String pid;
     private String distributorId;
@@ -40,7 +53,27 @@ public class ProductOrder {
     }
 
  
+    public ProductOrder(String orderId, String name, String pid, String distributorId, double quantityValue,
+			String quantityUnit, Date dateOfOrder, Date dateofDelivery, double pricePerUnit, double totalPrice,
+			String deliveryStatus, String warehouseId) {
+		super();
+		this.orderId = orderId;
+		this.name = name;
+		this.pid = pid;
+		this.distributorId = distributorId;
+		this.quantityValue = quantityValue;
+		this.quantityUnit = quantityUnit;
+		this.dateOfOrder = dateOfOrder;
+		this.dateofDelivery = dateofDelivery;
+		this.pricePerUnit = pricePerUnit;
+		this.totalPrice = totalPrice;
+		this.deliveryStatus = deliveryStatus;
+		this.warehouseId = warehouseId;
+	}
 
+
+    
+    
     public String getOrderId() {
         return orderId;
     }

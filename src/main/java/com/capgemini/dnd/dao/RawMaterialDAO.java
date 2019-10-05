@@ -2,6 +2,7 @@ package com.capgemini.dnd.dao;
 
 import java.sql.SQLException;
 import java.util.Date;
+import java.util.List;
 
 import com.capgemini.dnd.customexceptions.ConnectionException;
 import com.capgemini.dnd.customexceptions.ProcessDateException;
@@ -18,11 +19,11 @@ public interface RawMaterialDAO {
 
 
 
-	public void displayPendingRawMaterialOrderDetails() throws Exception;
+	public List<RawMaterialOrder> displayPendingRawMaterialOrderDetails() throws Exception;
 
-	public void displayCancelledRawMaterialOrderDetails() throws Exception;
+	public List<RawMaterialOrder> displayCancelledRawMaterialOrderDetails() throws Exception;
 
-	public void displayReceivedRawMaterialOrderDetails() throws Exception;
+	public List<RawMaterialOrder> displayReceivedRawMaterialOrderDetails() throws Exception;
 
 
 
@@ -36,15 +37,15 @@ public interface RawMaterialDAO {
 
 //	public String trackRawmaterial(String lotId);
 	
-	public void displayOrdersFromSupplier(String supid) throws Exception ;
+	public List<RawMaterialOrder> displayOrdersFromSupplier(String supid) throws Exception ;
 	
-	public void displayRawmaterialOrdersbetweenDetails(Date dt1, Date dt2) throws Exception;
+	public List<RawMaterialOrder> displayRawmaterialOrdersbetweenDetails(Date dt1, Date dt2) throws Exception;
 
 	public boolean doesRawMaterialOrderIdExist(String orderId) throws RMOrderIDDoesNotExistException, ConnectionException, SQLException;
 
 	public String trackRawMaterialOrder(RawMaterialStock rawMaterialStock);
 	
-	public void displayRawMaterialOrderDetails() throws Exception;
+	public List<RawMaterialOrder> displayRawMaterialOrderDetails() throws Exception;
 
 	public boolean doesRMNameExist(String name)throws RMNameDoesNotExistException, ConnectionException, SQLException;
 	

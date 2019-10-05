@@ -2,6 +2,8 @@ package com.capgemini.dnd.dao;
 
 import java.sql.SQLException;
 import java.util.Date;
+import java.util.List;
+
 import com.capgemini.dnd.customexceptions.ConnectionException;
 import com.capgemini.dnd.customexceptions.DistributorIDDoesNotExistException;
 import com.capgemini.dnd.customexceptions.ExitDateException;
@@ -14,23 +16,23 @@ import com.capgemini.dnd.dto.ProductStock;
 
 public interface ProductDAO {
 
-	public void displayProductOrderDetails() throws Exception;
+	public List<ProductOrder> displayProductOrderDetails() throws Exception;
 
 	public String updateStatusProductOrder(String oid, String newStatus) throws Exception;
 
-	public void displayPendingProductOrderDetails() throws Exception;
+	public List<ProductOrder> displayPendingProductOrderDetails() throws Exception;
 
-	public void displayCancelledProductOrderDetails() throws Exception;
+	public List<ProductOrder> displayCancelledProductOrderDetails() throws Exception;
 
-	public void displayReceivedProductOrderDetails() throws Exception;
+	public List<ProductOrder> displayReceivedProductOrderDetails() throws Exception;
 
 	public String addProductOrder(ProductOrder ProductOrderobject) throws Exception;
 
-	public void displayDispatchedProductOrderDetails() throws Exception;
+	public List<ProductOrder> displayDispatchedProductOrderDetails() throws Exception;
 
-	public void displayProductOrderbetweenDetails(Date dt1, Date dt2) throws Exception;
+	public List<ProductOrder> displayProductOrderbetweenDetails(Date dt1, Date dt2) throws Exception;
 
-	public void displayOrdersFromDistributor(String distId) throws Exception;// check111
+	public List<ProductOrder> displayOrdersFromDistributor(String distId) throws Exception;// check111
 
 	public boolean doesProductNameExist(String name)
 			throws ProductNameDoesNotExistException, ConnectionException, SQLException;

@@ -41,7 +41,7 @@ public interface QueryMapper {
 	    public static final String DISPLAY_PRODUCT_ORDER_FROM_DISTRIBUTOR="SELECT * FROM ProductOrders WHERE distributorid = ? ";
 	    public static final String DISPLAY_PRODUCT_ORDER_BW_DATES="SELECT * FROM ProductOrders WHERE (deliverystatus = 'received') AND (dateofdelivery BETWEEN ? and ?)";
 	    public static final String DISPLAY_RAWMATERIAL_ORDER = "SELECT * FROM RawmaterialOrders";
-		public static final String DISPLAY_PENDING_RAWMATERIAL_ORDER="SELECT * FROM RawmaterialOrders WHERE deliverystatus = \"pending\"";
+		public static final String DISPLAY_PENDING_RAWMATERIAL_ORDER="SELECT * FROM RawmaterialOrders WHERE deliverystatus = 'pending'";
 		public static final String DISPLAY_RECEIVED_RAWMATERIAL_ORDER="SELECT * FROM RawmaterialOrders WHERE deliverystatus = 'received'";
 		public static final String DISPLAY_CANCELLED_RAWMATERIAL_ORDER="SELECT * FROM RawmaterialOrders WHERE deliverystatus = 'Cancelled'";
 	    public static final String DISPLAY_DISPATCHED_RAWMATERIAL_ORDER="SELECT * FROM RawmaterialOrders WHERE deliverystatus = 'dispatched'";

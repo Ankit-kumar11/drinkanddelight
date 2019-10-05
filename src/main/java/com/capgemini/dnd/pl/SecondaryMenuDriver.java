@@ -30,6 +30,7 @@ public class SecondaryMenuDriver {
 	public static void displayRawMaterialMenu() throws Exception {
 		Scanner scanner = new Scanner(System.in);
 		EmployeeService employeeService = new EmployeeServiceImpl();
+		
 		String DIGITS_ONLY_REGEX = "[0-9]+";
 		while(true) {
 		System.out.println("-----------RAW MATERIALS MENU---------- ");
@@ -66,6 +67,7 @@ public class SecondaryMenuDriver {
 		}
 
 		if (choice == 1) {
+			
 			TertiaryMenuDriver.displayRawMaterialOrders();
 		} else if (choice == 2) {
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");

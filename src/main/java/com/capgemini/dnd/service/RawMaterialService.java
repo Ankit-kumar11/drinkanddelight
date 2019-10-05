@@ -3,6 +3,7 @@ package com.capgemini.dnd.service;
 
 import java.sql.SQLException;
 import java.util.Date;
+import java.util.List;
 
 import com.capgemini.dnd.customexceptions.ConnectionException;
 import com.capgemini.dnd.customexceptions.ExpiryDateException;
@@ -19,21 +20,21 @@ import com.capgemini.dnd.dto.RawMaterialStock;
 public interface RawMaterialService {
 //	public void viewRMspec(String name);
 
-	public void displayRawMaterialOrderDetails() throws Exception;
+	public List<RawMaterialOrder> displayRawMaterialOrderDetails() throws Exception;
 
-	public void displayPendingRawMaterialOrderDetails() throws  Exception;
+	public List<RawMaterialOrder> displayPendingRawMaterialOrderDetails() throws  Exception;
 
-	public void displayCancelledRawMaterialOrderDetails() throws Exception;
+	public List<RawMaterialOrder> displayCancelledRawMaterialOrderDetails() throws Exception;
 
-	public void displayReceivedRawMaterialOrderDetails() throws Exception;
+	public List<RawMaterialOrder> displayReceivedRawMaterialOrderDetails() throws Exception;
 
 	public String placeRawMaterialOrder(RawMaterialOrder newRawMaterialOrder) throws Exception;
 
 	public String updateStatusRawMaterialOrder(String oid, String newStatus) throws Exception;
 
-	public void displayOrdersFromSupplier(String supid) throws Exception ;
+	public List<RawMaterialOrder> displayOrdersFromSupplier(String supid) throws Exception ;
 	
-	public void displayRawmaterialOrdersbetweenDetails(Date dt1, Date dt2) throws Exception;
+	public List<RawMaterialOrder> displayRawmaterialOrdersbetweenDetails(Date dt1, Date dt2) throws Exception;
 
 	public boolean doesRawMaterialOrderIdExist(String id) throws RMOrderIDDoesNotExistException, ConnectionException, SQLException;
 

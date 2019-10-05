@@ -21,7 +21,7 @@ public class AuthenticationDriver {
 	static Logger logger=Logger.getRootLogger();
 	public AuthenticationDriver() {
 		System.out.println("PWD = " + new File(".").getAbsolutePath());
-		Log4JManager.initProps();
+		//Log4JManager.initProps();
 	}
 	public static void viewMenu() {
 		System.out.println("Drink and Delight Login/Register Page ----------------------");

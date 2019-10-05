@@ -5,7 +5,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
@@ -20,6 +22,7 @@ import com.capgemini.dnd.customexceptions.RowNotAddedException;
 import com.capgemini.dnd.customexceptions.SupplierIDDoesNotExistException;
 import com.capgemini.dnd.customexceptions.UpdateException;
 import com.capgemini.dnd.customexceptions.WIdDoesNotExistException;
+import com.capgemini.dnd.dto.ProductOrder;
 import com.capgemini.dnd.dto.RawMaterialOrder;
 import com.capgemini.dnd.dto.RawMaterialStock;
 import com.capgemini.dnd.util.DBUtil;
@@ -29,7 +32,7 @@ public class RawMaterialDAOImpl implements RawMaterialDAO {
 	Logger logger = Logger.getRootLogger();
 
 	public RawMaterialDAOImpl() {
-		//PropertyConfigurator.configure("resources//log4j.properties");
+		// PropertyConfigurator.configure("resources//log4j.properties");
 
 	}
 	/*
@@ -107,23 +110,33 @@ public class RawMaterialDAOImpl implements RawMaterialDAO {
 	 * : Exception - Creation Date : 25/09/2019 - Description : Returns list of all
 	 * raw materials
 	 *******************************************************************/
-	public void displayRawMaterialOrderDetails() throws Exception {
+	public List<RawMaterialOrder> displayRawMaterialOrderDetails() throws Exception {
+		List<RawMaterialOrder> rmoList1 = new ArrayList<RawMaterialOrder>();
 		Connection con = DBUtil.getInstance().getConnection();
 		PreparedStatement pst = null;
+		int isFetched = 0;
 		try {
 			pst = con.prepareStatement(QueryMapper.DISPLAY_RAWMATERIAL_ORDER);
 			ResultSet rs = pst.executeQuery();
 
-			int isFetched = 0;
 			while (rs.next()) {
 				isFetched = 1;
-
 				int index = 1;
-				System.out.println(rs.getInt(index++) + "\t" + rs.getString(index++) + "\t" + rs.getString(index++) + "\t"
-						+ rs.getString(index++) + "\t" + rs.getDouble(index++) + "\t" + rs.getString(index++) + "\t"
-						+ rs.getDate(index++) + "\t" + rs.getDate(index++) + "\t" + rs.getDouble(index++) + "\t" + rs.getDouble(index++)
-						+ "\t" + rs.getString(index++) + "\t" + rs.getString(index++));
 
+				String orderId = Integer.valueOf(rs.getInt(index++)).toString();
+				String name = rs.getString(index++);
+				String rawMaterialId = rs.getString(index++);
+				String supplierId = rs.getString(index++);
+				double quantityValue = rs.getDouble(index++);
+				String quantityUnit = rs.getString(index++);
+				Date dateOfOrder = rs.getDate(index++);
+				Date dateofDelivery = rs.getDate(index++);
+				double pricePerUnit = rs.getDouble(index++);
+				double totalPrice = rs.getDouble(index++);
+				String deliveryStatus = rs.getString(index++);
+				String warehouseId = rs.getString(index++);
+				rmoList1.add(new RawMaterialOrder(orderId, name, rawMaterialId, supplierId, quantityValue, quantityUnit,
+						dateOfOrder, dateofDelivery, pricePerUnit, totalPrice, deliveryStatus, warehouseId));
 			}
 			if (isFetched == 0) {
 				logger.error(Constants.LOGGER_ERROR_FETCH_FAILED);
@@ -148,6 +161,7 @@ public class RawMaterialDAOImpl implements RawMaterialDAO {
 
 			}
 		}
+		return rmoList1;
 
 	}
 
@@ -156,7 +170,8 @@ public class RawMaterialDAOImpl implements RawMaterialDAO {
 	 * Throws : Exception - Creation Date : 25/09/2019 - Description : Returns list
 	 * of pending raw materials
 	 *******************************************************************/
-	public void displayPendingRawMaterialOrderDetails() throws Exception {
+	public List<RawMaterialOrder> displayPendingRawMaterialOrderDetails() throws Exception {
+		List<RawMaterialOrder> rmoList1 = new ArrayList<RawMaterialOrder>();
 
 		Connection con = DBUtil.getInstance().getConnection();
 
@@ -167,14 +182,22 @@ public class RawMaterialDAOImpl implements RawMaterialDAO {
 
 			int isFetched = 0;
 			while (rs.next()) {
-				isFetched = 1;
-
 				int index = 1;
-				System.out.println(rs.getInt(index++) + "\t" + rs.getString(index++) + "\t" + rs.getString(index++)
-						+ "\t" + rs.getString(index++) + "\t" + rs.getDouble(index++) + "\t" + rs.getString(index++)
-						+ "\t" + rs.getDate(index++) + "\t" + rs.getDate(index++) + "\t" + rs.getDouble(index++) + "\t"
-						+ rs.getDouble(index++) + "\t" + rs.getString(index++) + "\t" + rs.getString(index++));
-
+				isFetched = 1;
+				String orderId = Integer.valueOf(rs.getInt(index++)).toString();
+				String name = rs.getString(index++);
+				String rawMaterialId = rs.getString(index++);
+				String supplierId = rs.getString(index++);
+				double quantityValue = rs.getDouble(index++);
+				String quantityUnit = rs.getString(index++);
+				Date dateOfOrder = rs.getDate(index++);
+				Date dateofDelivery = rs.getDate(index++);
+				double pricePerUnit = rs.getDouble(index++);
+				double totalPrice = rs.getDouble(index++);
+				String deliveryStatus = rs.getString(index++);
+				String warehouseId = rs.getString(index++);
+				rmoList1.add(new RawMaterialOrder(orderId, name, rawMaterialId, supplierId, quantityValue, quantityUnit,
+						dateOfOrder, dateofDelivery, pricePerUnit, totalPrice, deliveryStatus, warehouseId));
 			}
 			if (isFetched == 0) {
 				logger.error(Constants.LOGGER_ERROR_FETCH_FAILED);
@@ -198,7 +221,7 @@ public class RawMaterialDAOImpl implements RawMaterialDAO {
 
 			}
 		}
-
+		return rmoList1;
 	}
 
 	/*****************************************************************
@@ -206,8 +229,8 @@ public class RawMaterialDAOImpl implements RawMaterialDAO {
 	 * - Throws : Exception - Creation Date : 25/09/2019 - Description : Returns
 	 * list of received raw materials
 	 *******************************************************************/
-	public void displayReceivedRawMaterialOrderDetails() throws Exception {
-
+	public List<RawMaterialOrder> displayReceivedRawMaterialOrderDetails() throws Exception {
+		List<RawMaterialOrder> rmoList1 = new ArrayList<RawMaterialOrder>();
 		Connection con = DBUtil.getInstance().getConnection();
 
 		PreparedStatement pst = null;
@@ -217,14 +240,22 @@ public class RawMaterialDAOImpl implements RawMaterialDAO {
 
 			int isFetched = 0;
 			while (rs.next()) {
-				isFetched = 1;
-
 				int index = 1;
-				System.out.println(rs.getInt(index++) + "\t" + rs.getString(index++) + "\t" + rs.getString(index++)
-						+ "\t" + rs.getString(index++) + "\t" + rs.getDouble(index++) + "\t" + rs.getString(index++)
-						+ "\t" + rs.getDate(index++) + "\t" + rs.getDate(index++) + "\t" + rs.getDouble(index++) + "\t"
-						+ rs.getDouble(index++) + "\t" + rs.getString(index++) + "\t" + rs.getString(index++));
-
+				isFetched = 1;
+				String orderId = Integer.valueOf(rs.getInt(index++)).toString();
+				String name = rs.getString(index++);
+				String rawMaterialId = rs.getString(index++);
+				String supplierId = rs.getString(index++);
+				double quantityValue = rs.getDouble(index++);
+				String quantityUnit = rs.getString(index++);
+				Date dateOfOrder = rs.getDate(index++);
+				Date dateofDelivery = rs.getDate(index++);
+				double pricePerUnit = rs.getDouble(index++);
+				double totalPrice = rs.getDouble(index++);
+				String deliveryStatus = rs.getString(index++);
+				String warehouseId = rs.getString(index++);
+				rmoList1.add(new RawMaterialOrder(orderId, name, rawMaterialId, supplierId, quantityValue, quantityUnit,
+						dateOfOrder, dateofDelivery, pricePerUnit, totalPrice, deliveryStatus, warehouseId));
 			}
 			if (isFetched == 0) {
 				logger.error(Constants.LOGGER_ERROR_FETCH_FAILED);
@@ -248,7 +279,7 @@ public class RawMaterialDAOImpl implements RawMaterialDAO {
 
 			}
 		}
-
+		return rmoList1;
 	}
 
 	/*****************************************************************
@@ -256,7 +287,8 @@ public class RawMaterialDAOImpl implements RawMaterialDAO {
 	 * - Throws : Exception - Creation Date : 25/09/2019 - Description : Returns
 	 * list of cancelled raw materials
 	 *******************************************************************/
-	public void displayCancelledRawMaterialOrderDetails() throws Exception {
+	public List<RawMaterialOrder> displayCancelledRawMaterialOrderDetails() throws Exception {
+		List<RawMaterialOrder> rmoList1 = new ArrayList<RawMaterialOrder>();
 
 		Connection con = DBUtil.getInstance().getConnection();
 
@@ -267,14 +299,22 @@ public class RawMaterialDAOImpl implements RawMaterialDAO {
 
 			int isFetched = 0;
 			while (rs.next()) {
-				isFetched = 1;
-
 				int index = 1;
-				System.out.println(rs.getInt(index++) + "\t" + rs.getString(index++) + "\t" + rs.getString(index++)
-						+ "\t" + rs.getString(index++) + "\t" + rs.getDouble(index++) + "\t" + rs.getString(index++)
-						+ "\t" + rs.getDate(index++) + "\t" + rs.getDate(index++) + "\t" + rs.getDouble(index++) + "\t"
-						+ rs.getDouble(index++) + "\t" + rs.getString(index++) + "\t" + rs.getString(index++));
-
+				isFetched = 1;
+				String orderId = Integer.valueOf(rs.getInt(index++)).toString();
+				String name = rs.getString(index++);
+				String rawMaterialId = rs.getString(index++);
+				String supplierId = rs.getString(index++);
+				double quantityValue = rs.getDouble(index++);
+				String quantityUnit = rs.getString(index++);
+				Date dateOfOrder = rs.getDate(index++);
+				Date dateofDelivery = rs.getDate(index++);
+				double pricePerUnit = rs.getDouble(index++);
+				double totalPrice = rs.getDouble(index++);
+				String deliveryStatus = rs.getString(index++);
+				String warehouseId = rs.getString(index++);
+				rmoList1.add(new RawMaterialOrder(orderId, name, rawMaterialId, supplierId, quantityValue, quantityUnit,
+						dateOfOrder, dateofDelivery, pricePerUnit, totalPrice, deliveryStatus, warehouseId));
 			}
 			if (isFetched == 0) {
 				logger.error(Constants.LOGGER_ERROR_FETCH_FAILED);
@@ -298,7 +338,7 @@ public class RawMaterialDAOImpl implements RawMaterialDAO {
 
 			}
 		}
-
+		return rmoList1;
 	}
 
 	/*****************************************************************
@@ -306,23 +346,32 @@ public class RawMaterialDAOImpl implements RawMaterialDAO {
 	 * : - Throws : Exception - Creation Date : 25/09/2019 - Description : Returns
 	 * list of dispatched raw materials
 	 *******************************************************************/
-	public void displayDispatchedRawMaterialOrderDetails() throws Exception {
-
+	public List<RawMaterialOrder> displayDispatchedRawMaterialOrderDetails() throws Exception {
+		List<RawMaterialOrder> rmoList1 = new ArrayList<RawMaterialOrder>();
 		Connection con = DBUtil.getInstance().getConnection();
 		PreparedStatement pst = null;
 		try {
 			pst = con.prepareStatement(QueryMapper.DISPLAY_DISPATCHED_RAWMATERIAL_ORDER);
 			ResultSet rs = pst.executeQuery();
-
 			int isFetched = 0;
 			while (rs.next()) {
+				int index = 1;
 				isFetched = 1;
 
-				int index = 1;
-				System.out.println(rs.getInt(index++) + "\t" + rs.getString(index++) + "\t" + rs.getString(index++)
-						+ "\t" + rs.getString(index++) + "\t" + rs.getDouble(index++) + "\t" + rs.getString(index++)
-						+ "\t" + rs.getDate(index++) + "\t" + rs.getDate(index++) + "\t" + rs.getDouble(index++) + "\t"
-						+ rs.getDouble(index++) + "\t" + rs.getString(index++) + "\t" + rs.getString(index++));
+				String orderId = Integer.valueOf(rs.getInt(index++)).toString();
+				String name = rs.getString(index++);
+				String rawMaterialId = rs.getString(index++);
+				String supplierId = rs.getString(index++);
+				double quantityValue = rs.getDouble(index++);
+				String quantityUnit = rs.getString(index++);
+				Date dateOfOrder = rs.getDate(index++);
+				Date dateofDelivery = rs.getDate(index++);
+				double pricePerUnit = rs.getDouble(index++);
+				double totalPrice = rs.getDouble(index++);
+				String deliveryStatus = rs.getString(index++);
+				String warehouseId = rs.getString(index++);
+				rmoList1.add(new RawMaterialOrder(orderId, name, rawMaterialId, supplierId, quantityValue, quantityUnit,
+						dateOfOrder, dateofDelivery, pricePerUnit, totalPrice, deliveryStatus, warehouseId));
 
 			}
 			if (isFetched == 0) {
@@ -347,6 +396,7 @@ public class RawMaterialDAOImpl implements RawMaterialDAO {
 
 			}
 		}
+		return rmoList1;
 
 	}
 
@@ -356,7 +406,8 @@ public class RawMaterialDAOImpl implements RawMaterialDAO {
 	 * list of raw materials between two dates given by user
 	 *******************************************************************/
 
-	public void displayRawmaterialOrdersbetweenDetails(java.util.Date dt1, java.util.Date dt2) throws Exception {
+	public List<RawMaterialOrder> displayRawmaterialOrdersbetweenDetails(java.util.Date dt1,java.util.Date dt2) throws Exception {
+		List<RawMaterialOrder> rmoList1 = new ArrayList<RawMaterialOrder>();
 		Connection con = DBUtil.getInstance().getConnection();
 		PreparedStatement pst = null;
 		try {
@@ -367,13 +418,23 @@ public class RawMaterialDAOImpl implements RawMaterialDAO {
 
 			int isFetched = 0;
 			while (rs.next()) {
+				int index = 1;
 				isFetched = 1;
 
-				int index = 1;
-				System.out.println(rs.getInt(index++) + "\t" + rs.getString(index++) + "\t" + rs.getString(index++)
-						+ "\t" + rs.getString(index++) + "\t" + rs.getDouble(index++) + "\t" + rs.getString(index++)
-						+ "\t" + rs.getDate(index++) + "\t" + rs.getDate(index++) + "\t" + rs.getDouble(index++) + "\t"
-						+ rs.getDouble(index++) + "\t" + rs.getString(index++) + "\t" + rs.getString(index++));
+				String orderId = Integer.valueOf(rs.getInt(index++)).toString();
+				String name = rs.getString(index++);
+				String rawMaterialId = rs.getString(index++);
+				String supplierId = rs.getString(index++);
+				double quantityValue = rs.getDouble(index++);
+				String quantityUnit = rs.getString(index++);
+				Date dateOfOrder = rs.getDate(index++);
+				Date dateofDelivery = rs.getDate(index++);
+				double pricePerUnit = rs.getDouble(index++);
+				double totalPrice = rs.getDouble(index++);
+				String deliveryStatus = rs.getString(index++);
+				String warehouseId = rs.getString(index++);
+				rmoList1.add(new RawMaterialOrder(orderId, name, rawMaterialId, supplierId, quantityValue, quantityUnit,
+						dateOfOrder, dateofDelivery, pricePerUnit, totalPrice, deliveryStatus, warehouseId));
 
 			}
 			if (isFetched == 0) {
@@ -398,15 +459,19 @@ public class RawMaterialDAOImpl implements RawMaterialDAO {
 
 			}
 		}
-
+		return rmoList1;
 	}
+
 
 	/*****************************************************************
 	 * - Method Name: displayOrdersFromSupplier - Input Parameters : - Throws :
 	 * Exception - Creation Date : 25/09/2019 - Description : Returns list of raw
 	 * materials by a particular supplier
 	 *******************************************************************/
-	public void displayOrdersFromSupplier(String supid) throws Exception {
+	
+	public List<RawMaterialOrder> displayOrdersFromSupplier (String supid) throws Exception {
+		
+		List<RawMaterialOrder> rmoList1 = new ArrayList<RawMaterialOrder>();
 		Connection con = DBUtil.getInstance().getConnection();
 		PreparedStatement pst = null;
 		try {
@@ -415,13 +480,23 @@ public class RawMaterialDAOImpl implements RawMaterialDAO {
 			ResultSet rs = pst.executeQuery();
 			int isFetched = 0;
 			while (rs.next()) {
+				int index = 1;
 				isFetched = 1;
 
-				int index = 1;
-				System.out.println(rs.getInt(index++) + "\t" + rs.getString(index++) + "\t" + rs.getString(index++)
-						+ "\t" + rs.getString(index++) + "\t" + rs.getDouble(index++) + "\t" + rs.getString(index++)
-						+ "\t" + rs.getDate(index++) + "\t" + rs.getDate(index++) + "\t" + rs.getDouble(index++) + "\t"
-						+ rs.getDouble(index++) + "\t" + rs.getString(index++) + "\t" + rs.getString(index++));
+				String orderId = Integer.valueOf(rs.getInt(index++)).toString();
+				String name = rs.getString(index++);
+				String rawMaterialId = rs.getString(index++);
+				String supplierId = rs.getString(index++);
+				double quantityValue = rs.getDouble(index++);
+				String quantityUnit = rs.getString(index++);
+				Date dateOfOrder = rs.getDate(index++);
+				Date dateofDelivery = rs.getDate(index++);
+				double pricePerUnit = rs.getDouble(index++);
+				double totalPrice = rs.getDouble(index++);
+				String deliveryStatus = rs.getString(index++);
+				String warehouseId = rs.getString(index++);
+				rmoList1.add(new RawMaterialOrder(orderId, name, rawMaterialId, supplierId, quantityValue, quantityUnit,
+						dateOfOrder, dateofDelivery, pricePerUnit, totalPrice, deliveryStatus, warehouseId));
 
 			}
 			if (isFetched == 0) {
@@ -446,16 +521,14 @@ public class RawMaterialDAOImpl implements RawMaterialDAO {
 
 			}
 		}
+		return rmoList1;
 	}
 
 	/*******************************************************************************************************
-	 * - Function Name : add raw material order 
-	 * - Input Parameters :RawmaterialOrder newRMO 
-	 * - Return Type : String 
-	 * - Throws : Exception 
-	 * - Author : Capgemini 
-	 * - Creation Date : 25/09/2019 
-	 * - Description : Raw Material orders is placed i.e. entry is added in database
+	 * - Function Name : add raw material order - Input Parameters :RawmaterialOrder
+	 * newRMO - Return Type : String - Throws : Exception - Author : Capgemini -
+	 * Creation Date : 25/09/2019 - Description : Raw Material orders is placed i.e.
+	 * entry is added in database
 	 ********************************************************************************************************/
 	public boolean addRawMaterialOrder(RawMaterialOrder newRMO) throws Exception {
 		boolean added = false;
@@ -530,7 +603,7 @@ public class RawMaterialDAOImpl implements RawMaterialDAO {
 			logger.error(e.getMessage());
 			throw new ConnectionException(Constants.CONNECTION_EXCEPTION_MESSAGE_DBCONNECTION_ERROR);
 		}
-		
+
 		PreparedStatement preparedStatement = null;
 		ResultSet resultSet = null;
 
@@ -565,9 +638,9 @@ public class RawMaterialDAOImpl implements RawMaterialDAO {
 		boolean rmOrderIdFound = false;
 		int oid = -1;
 		try {
-		oid = Integer.parseInt(orderId);
-		} catch(Exception e) {
-			
+			oid = Integer.parseInt(orderId);
+		} catch (Exception e) {
+
 		}
 		Connection con;
 		try {
@@ -577,7 +650,7 @@ public class RawMaterialDAOImpl implements RawMaterialDAO {
 			logger.error(e.getMessage());
 			throw new ConnectionException(Constants.CONNECTION_EXCEPTION_MESSAGE_DBCONNECTION_ERROR);
 		}
-		
+
 		PreparedStatement preparedStatement = null;
 		ResultSet resultSet = null;
 
@@ -603,12 +676,12 @@ public class RawMaterialDAOImpl implements RawMaterialDAO {
 		}
 
 		return rmOrderIdFound;
-		
+
 	}
 
 	public boolean doesSupplierIdExist(String suppId)
 			throws SupplierIDDoesNotExistException, ConnectionException, SQLException {
-		
+
 		boolean suppIdFound = false;
 		Connection connection;
 		try {
@@ -673,7 +746,7 @@ public class RawMaterialDAOImpl implements RawMaterialDAO {
 	}
 
 	public boolean doesWIdExist(String wId) throws WIdDoesNotExistException, ConnectionException, SQLException {
-		
+
 		boolean wIdFound = false;
 		Connection connection;
 		try {
@@ -706,13 +779,11 @@ public class RawMaterialDAOImpl implements RawMaterialDAO {
 	}
 
 	/*******************************************************************************************************
-	 * - Function Name : update raw material stock 
-	 * - Input Parameters : String OrderId, Date manufacturing Date, process Date, string quality status 
-	 * - Return Type : Void 
-	 * - Throws : SQL Exception, Connection Exception 
-	 * - Author : CAPGEMINI 
-	 * - Creation Date : 25/09/2019 
-	 * - Description : updating manufacturing date, process date and quality status into raw material stock table.
+	 * - Function Name : update raw material stock - Input Parameters : String
+	 * OrderId, Date manufacturing Date, process Date, string quality status -
+	 * Return Type : Void - Throws : SQL Exception, Connection Exception - Author :
+	 * CAPGEMINI - Creation Date : 25/09/2019 - Description : updating manufacturing
+	 * date, process date and quality status into raw material stock table.
 	 ********************************************************************************************************/
 	@Override
 	public String updateRMStock(RawMaterialStock rawMaterialStock) throws SQLException, ConnectionException {
@@ -725,7 +796,8 @@ public class RawMaterialDAOImpl implements RawMaterialDAO {
 			rmOrderinStock = doesRawMaterialOrderIdExistInStock(rawMaterialStock.getOrderId());
 			if (rmOrderinStock == false) {
 
-				PreparedStatement statementt1 = connection.prepareStatement(QueryMapper.RETRIEVERMORDERDETAILSFORRMSTOCK);
+				PreparedStatement statementt1 = connection
+						.prepareStatement(QueryMapper.RETRIEVERMORDERDETAILSFORRMSTOCK);
 				statementt1.setInt(1, Integer.parseInt(rawMaterialStock.getOrderId()));
 				ResultSet rs = statementt1.executeQuery();
 				String name = null;
@@ -759,15 +831,12 @@ public class RawMaterialDAOImpl implements RawMaterialDAO {
 				statementt2.executeUpdate();
 			}
 
-			
-
 			PreparedStatement statementt = connection.prepareStatement(QueryMapper.UPDATERMSTOCK);
 			statementt.setDate(1, DBUtil.stringtoDate(rawMaterialStock.getManufacturingDate()));
 			statementt.setDate(2, DBUtil.stringtoDate(rawMaterialStock.getExpiryDate()));
 			statementt.setString(3, rawMaterialStock.getQualityCheck());
 			statementt.setInt(4, Integer.parseInt(rawMaterialStock.getOrderId()));
 			statementt.executeUpdate();
-			
 
 			connection.close();
 			return Constants.DATA_INSERTED_MESSAGE;
@@ -784,18 +853,15 @@ public class RawMaterialDAOImpl implements RawMaterialDAO {
 			logger.error(Constants.LOGGER_ERROR_MESSAGE_DATABASE_NOT_CONNECTED);
 			throw new ConnectionException(Constants.LOGGER_ERROR_MESSAGE_DATABASE_NOT_CONNECTED);
 		}
-	
 
 	}
 
 	/*******************************************************************************************************
-	 * - Function Name : process date check 
-	 * - Input Parameters : String orderId, Date process date 
-	 * - Return Type : boolean 
-	 * - Throws : SQLException, ConnectionException, ProcessDateException 
-	 * - Author : CAPGEMINI 
-	 * - Creation Date : 25/09/2019 
-	 * - Description : checking that process_date should be after delivery_date and before expiry_date.
+	 * - Function Name : process date check - Input Parameters : String orderId,
+	 * Date process date - Return Type : boolean - Throws : SQLException,
+	 * ConnectionException, ProcessDateException - Author : CAPGEMINI - Creation
+	 * Date : 25/09/2019 - Description : checking that process_date should be after
+	 * delivery_date and before expiry_date.
 	 ********************************************************************************************************/
 
 	@Override
@@ -814,7 +880,6 @@ public class RawMaterialDAOImpl implements RawMaterialDAO {
 			stmt.setInt(1, Integer.parseInt(rawMaterialStock.getOrderId()));
 
 			ResultSet rs = stmt.executeQuery();
-			
 
 			java.sql.Date deliveryDate = null;
 			java.sql.Date expiryDate = null;
@@ -822,7 +887,7 @@ public class RawMaterialDAOImpl implements RawMaterialDAO {
 			while (rs.next()) {
 
 				deliveryDate = rs.getDate(1);
-				
+
 				expiryDate = rs.getDate(2);
 
 				if (rawMaterialStock.getProcessDate().after(deliveryDate)
@@ -830,7 +895,7 @@ public class RawMaterialDAOImpl implements RawMaterialDAO {
 					datecheck = true;
 					return datecheck;
 				}
-					
+
 				else
 					throw new ProcessDateException(Constants.PROCESS_DATE_EXCEPTION_MESSAGE);
 
@@ -853,13 +918,10 @@ public class RawMaterialDAOImpl implements RawMaterialDAO {
 	}
 
 	/*******************************************************************************************************
-	 * - Function Name : update process_date in Stock 
-	 * - Input Parameters : String orderId, Date Process_date 
-	 * - Return Type : void 
-	 * - Throws : No Exception 
-	 * - Author : CAPGEMINI 
-	 * - Creation Date : 25/09/2019 
-	 * - Description : updating process date for an orderId in the Raw Material Stock table.
+	 * - Function Name : update process_date in Stock - Input Parameters : String
+	 * orderId, Date Process_date - Return Type : void - Throws : No Exception -
+	 * Author : CAPGEMINI - Creation Date : 25/09/2019 - Description : updating
+	 * process date for an orderId in the Raw Material Stock table.
 	 ********************************************************************************************************/
 
 	@Override
@@ -891,13 +953,10 @@ public class RawMaterialDAOImpl implements RawMaterialDAO {
 	}
 
 	/*******************************************************************************************************
-	 * - Function Name : Track raw material order 
-	 * - Input Parameters : String orderId 
-	 * - Return Type : String 
-	 * - Throws : No Exception 
-	 * - Author : CAPGEMINI 
-	 * - Creation Date : 23/09/2019 
-	 * - Description : Raw Material order is tracked in the warehouse along with its shelf life
+	 * - Function Name : Track raw material order - Input Parameters : String
+	 * orderId - Return Type : String - Throws : No Exception - Author : CAPGEMINI -
+	 * Creation Date : 23/09/2019 - Description : Raw Material order is tracked in
+	 * the warehouse along with its shelf life
 	 ********************************************************************************************************/
 
 	@Override
@@ -910,7 +969,6 @@ public class RawMaterialDAOImpl implements RawMaterialDAO {
 			PreparedStatement stmt = connection.prepareStatement(QueryMapper.TRACKRMORDER);
 			stmt.setInt(1, Integer.parseInt(rawMaterialStock.getOrderId()));
 			ResultSet rs = stmt.executeQuery();
-			
 
 			String warehouseId = null;
 			java.sql.Date processDate = null;
@@ -919,14 +977,13 @@ public class RawMaterialDAOImpl implements RawMaterialDAO {
 			while (rs.next()) {
 
 				processDate = rs.getDate(1);
-				
+
 				deliveryDate = rs.getDate(2);
-				
+
 				warehouseId = rs.getString(3);
-				
+
 			}
 
-	
 			String message = "The order ID had been in the warehouse with warehouseID = " + warehouseId + " from "
 					+ deliveryDate.toString() + " to " + processDate.toString() + "("
 					+ DBUtil.diffBetweenDays(processDate, deliveryDate) + " days)";

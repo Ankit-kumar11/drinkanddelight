@@ -2,6 +2,7 @@ package com.capgemini.dnd.service;
 
 import java.sql.SQLException;
 import java.util.Date;
+import java.util.List;
 
 import com.capgemini.dnd.customexceptions.ConnectionException;
 import com.capgemini.dnd.customexceptions.DistributorIDDoesNotExistException;
@@ -18,13 +19,13 @@ import com.capgemini.dnd.dto.ProductStock;
 public interface ProductService {
 	public String updateStatusProductOrder(String oid, String newStatus) throws Exception;
 
-	public void displayProductOrderDetails() throws Exception ;
+	public List<ProductOrder> displayProductOrderDetails() throws Exception ;
 
-	public void displayPendingProductOrderDetails() throws Exception;
+	public List<ProductOrder> displayPendingProductOrderDetails() throws Exception;
 
-	public void displayCancelledProductOrderDetails() throws Exception ;
+	public List<ProductOrder> displayCancelledProductOrderDetails() throws Exception ;
 	
-	public void displayReceivedProductOrderDetails() throws Exception ;
+	public List<ProductOrder> displayReceivedProductOrderDetails() throws Exception ;
 	
     public String placeProductOrder(ProductOrder ProductOrderobject) throws Exception;
 
@@ -36,13 +37,13 @@ public interface ProductService {
 	
 //    public void displayDeliveredProductOrderDetails() throws Exception ;
 	
-    public void displayDispatchedProductOrderDetails() throws Exception;
+    public List<ProductOrder> displayDispatchedProductOrderDetails() throws Exception;
 	
 //    public long timeTakenForDelivery(String plotid);
 
-	public void displayProductOrderbetweenDetails(Date dt1, Date dt2) throws Exception;
+	public List<ProductOrder> displayProductOrderbetweenDetails(Date dt1, Date dt2) throws Exception;
 
-	public void displayOrdersFromDistributor(String distid) throws Exception;
+	public List<ProductOrder> displayOrdersFromDistributor(String distid) throws Exception;
 
 	public boolean doesProductNameExist(String name) throws ProductNameDoesNotExistException, ConnectionException, SQLException;
 

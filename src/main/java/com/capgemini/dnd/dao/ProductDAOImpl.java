@@ -5,10 +5,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
 
 import com.capgemini.dnd.customexceptions.ConnectionException;
 import com.capgemini.dnd.customexceptions.DisplayException;
@@ -17,10 +18,6 @@ import com.capgemini.dnd.customexceptions.ExitDateException;
 import com.capgemini.dnd.customexceptions.ProductIDDoesNotExistException;
 import com.capgemini.dnd.customexceptions.ProductNameDoesNotExistException;
 import com.capgemini.dnd.customexceptions.ProductOrderIDDoesNotExistException;
-import com.capgemini.dnd.customexceptions.RMIDDoesNotExistException;
-import com.capgemini.dnd.customexceptions.RMNameDoesNotExistException;
-import com.capgemini.dnd.customexceptions.RMOrderIDDoesNotExistException;
-import com.capgemini.dnd.customexceptions.SupplierIDDoesNotExistException;
 import com.capgemini.dnd.customexceptions.UpdateException;
 import com.capgemini.dnd.customexceptions.WIdDoesNotExistException;
 import com.capgemini.dnd.dto.ProductOrder;
@@ -32,7 +29,7 @@ public class ProductDAOImpl implements ProductDAO {
 	Logger logger = Logger.getRootLogger();
 
 	public ProductDAOImpl() {
-		PropertyConfigurator.configure("resources//log4j.properties");
+		// PropertyConfigurator.configure("resources//log4j.properties");
 
 	}
 
@@ -40,6 +37,7 @@ public class ProductDAOImpl implements ProductDAO {
 	 * Product order delivery status update
 	 * 
 	 */
+	
 	public String updateStatusProductOrder(String oid, String newStatus) throws Exception {
 
 		Connection con = DBUtil.getInstance().getConnection();
@@ -98,7 +96,7 @@ public class ProductDAOImpl implements ProductDAO {
 				throw new UpdateException(Constants.UPDATE_EXCEPTION_MESSAGE_TECHNICAL_PROBLEM);
 			} finally {
 				try {
-					
+
 					preparedStatement.close();
 					con.close();
 				} catch (SQLException sqlException) {
@@ -116,24 +114,35 @@ public class ProductDAOImpl implements ProductDAO {
 	 * Exception - Creation Date : 25/09/2019 - Description : Returns list of all
 	 * products
 	 *******************************************************************/
-
-	public void displayProductOrderDetails() throws Exception {
+		public List<ProductOrder> displayProductOrderDetails() throws Exception {
+		List<ProductOrder> poList1 = new ArrayList<ProductOrder>();
 		Connection connection = DBUtil.getInstance().getConnection();
 		PreparedStatement pst = null;
+		
 		try {
 			pst = connection.prepareStatement(QueryMapper.DISPLAY_PRODUCT_ORDER);
 			ResultSet rs = pst.executeQuery();
 
 			int isFetched = 0;
 			while (rs.next()) {
+
 				isFetched = 1;
-
 				int index = 1;
-				System.out.println(rs.getInt(index++) + "\t" + rs.getString(index++) + "\t" + rs.getString(index++)
-						+ "\t" + rs.getString(index++) + "\t" + rs.getDouble(index++) + "\t" + rs.getString(index++)
-						+ "\t" + rs.getDate(index++) + "\t" + rs.getDate(index++) + "\t" + rs.getDouble(index++) + "\t"
-						+ rs.getDouble(index++) + "\t" + rs.getString(index++) + "\t" + rs.getString(index++));
 
+				String orderId = Integer.valueOf(rs.getInt(index++)).toString();
+				String name = rs.getString(index++);
+				String productId = rs.getString(index++);
+				String distributorId = rs.getString(index++);
+				double quantityValue = rs.getDouble(index++);
+				String quantityUnit = rs.getString(index++);
+				Date dateOfOrder = rs.getDate(index++);
+				Date dateofDelivery = rs.getDate(index++);
+				double pricePerUnit = rs.getDouble(index++);
+				double totalPrice = rs.getDouble(index++);
+				String deliveryStatus = rs.getString(index++);
+				String warehouseId = rs.getString(index++);
+				poList1.add(new ProductOrder(orderId, name, productId, distributorId, quantityValue, quantityUnit,
+						dateOfOrder, dateofDelivery, pricePerUnit, totalPrice, deliveryStatus, warehouseId));
 			}
 
 			if (isFetched == 0) {
@@ -150,7 +159,7 @@ public class ProductDAOImpl implements ProductDAO {
 			throw new DisplayException(Constants.DISPLAY_EXCEPTION_MESSAGE_TECHNICAL_PROBLEM);
 		} finally {
 			try {
-				
+
 				pst.close();
 				connection.close();
 			} catch (SQLException sqlException) {
@@ -159,6 +168,7 @@ public class ProductDAOImpl implements ProductDAO {
 
 			}
 		}
+		return poList1;
 
 	}
 
@@ -166,9 +176,11 @@ public class ProductDAOImpl implements ProductDAO {
 	 * - Method Name: displayProductOrderbetweenDetails - Input Parameters : -
 	 * Throws : Exception - Creation Date : 25/09/2019 - Description : Returns list
 	 * of all received products between tow dates entered by user
+	 * @return 
 	 *******************************************************************/
 
-	public void displayProductOrderbetweenDetails(java.util.Date dt1, java.util.Date dt2) throws Exception {
+	public List<ProductOrder> displayProductOrderbetweenDetails(java.util.Date dt1, java.util.Date dt2) throws Exception {
+		List<ProductOrder> poList1 = new ArrayList<ProductOrder>();
 		Connection connection = DBUtil.getInstance().getConnection();
 
 		PreparedStatement pst = null;
@@ -182,12 +194,22 @@ public class ProductDAOImpl implements ProductDAO {
 			int isFetched = 0;
 			while (rs.next()) {
 				isFetched = 1;
-
 				int index = 1;
-				System.out.println(rs.getInt(index++) + "\t" + rs.getString(index++) + "\t" + rs.getString(index++)
-						+ "\t" + rs.getString(index++) + "\t" + rs.getDouble(index++) + "\t" + rs.getString(index++)
-						+ "\t" + rs.getDate(index++) + "\t" + rs.getDate(index++) + "\t" + rs.getDouble(index++) + "\t"
-						+ rs.getDouble(index++) + "\t" + rs.getString(index++) + "\t" + rs.getString(index++));
+
+				String orderId = Integer.valueOf(rs.getInt(index++)).toString();
+				String name = rs.getString(index++);
+				String productId = rs.getString(index++);
+				String distributorId = rs.getString(index++);
+				double quantityValue = rs.getDouble(index++);
+				String quantityUnit = rs.getString(index++);
+				Date dateOfOrder = rs.getDate(index++);
+				Date dateofDelivery = rs.getDate(index++);
+				double pricePerUnit = rs.getDouble(index++);
+				double totalPrice = rs.getDouble(index++);
+				String deliveryStatus = rs.getString(index++);
+				String warehouseId = rs.getString(index++);
+				poList1.add(new ProductOrder(orderId, name, productId, distributorId, quantityValue, quantityUnit,
+						dateOfOrder, dateofDelivery, pricePerUnit, totalPrice, deliveryStatus, warehouseId));
 
 			}
 
@@ -205,7 +227,7 @@ public class ProductDAOImpl implements ProductDAO {
 			throw new DisplayException(Constants.DISPLAY_EXCEPTION_MESSAGE_TECHNICAL_PROBLEM);
 		} finally {
 			try {
-				
+
 				pst.close();
 				connection.close();
 			} catch (SQLException sqlException) {
@@ -214,6 +236,7 @@ public class ProductDAOImpl implements ProductDAO {
 
 			}
 		}
+		return poList1;
 
 	}
 
@@ -223,7 +246,8 @@ public class ProductDAOImpl implements ProductDAO {
 	 * received products from a particular distributor
 	 *******************************************************************/
 
-	public void displayOrdersFromDistributor(String distId) throws Exception {
+	public List<ProductOrder> displayOrdersFromDistributor(String distId) throws Exception {
+		List<ProductOrder> poList1 = new ArrayList<ProductOrder>();
 		Connection connection = DBUtil.getInstance().getConnection();
 		PreparedStatement pst = null;
 
@@ -235,12 +259,23 @@ public class ProductDAOImpl implements ProductDAO {
 			int isFetched = 0;
 			while (rs.next()) {
 				isFetched = 1;
-
 				int index = 1;
-				System.out.println(rs.getInt(index++) + "\t" + rs.getString(index++) + "\t" + rs.getString(index++)
-						+ "\t" + rs.getString(index++) + "\t" + rs.getDouble(index++) + "\t" + rs.getString(index++)
-						+ "\t" + rs.getDate(index++) + "\t" + rs.getDate(index++) + "\t" + rs.getDouble(index++) + "\t"
-						+ rs.getDouble(index++) + "\t" + rs.getString(index++) + "\t" + rs.getString(index++));
+
+				String orderId = Integer.valueOf(rs.getInt(index++)).toString();
+				String name = rs.getString(index++);
+				String productId = rs.getString(index++);
+				String distributorId = rs.getString(index++);
+				double quantityValue = rs.getDouble(index++);
+				String quantityUnit = rs.getString(index++);
+				Date dateOfOrder = rs.getDate(index++);
+				Date dateofDelivery = rs.getDate(index++);
+				double pricePerUnit = rs.getDouble(index++);
+				double totalPrice = rs.getDouble(index++);
+				String deliveryStatus = rs.getString(index++);
+				String warehouseId = rs.getString(index++);
+				poList1.add(new ProductOrder(orderId, name, productId, distributorId, quantityValue, quantityUnit,
+						dateOfOrder, dateofDelivery, pricePerUnit, totalPrice, deliveryStatus, warehouseId));
+
 
 			}
 
@@ -267,6 +302,7 @@ public class ProductDAOImpl implements ProductDAO {
 
 			}
 		}
+		return poList1;
 
 	}
 
@@ -276,8 +312,8 @@ public class ProductDAOImpl implements ProductDAO {
 	 * of all pending products from a particular distributor
 	 *******************************************************************/
 
-	public void displayPendingProductOrderDetails() throws Exception {
-
+	public List<ProductOrder> displayPendingProductOrderDetails() throws Exception {
+		List<ProductOrder> poList1 = new ArrayList<ProductOrder>();
 		Connection connection = DBUtil.getInstance().getConnection();
 		PreparedStatement pst = null;
 		try {
@@ -287,12 +323,22 @@ public class ProductDAOImpl implements ProductDAO {
 			int isFetched = 0;
 			while (rs.next()) {
 				isFetched = 1;
-
 				int index = 1;
-				System.out.println(rs.getInt(index++) + "\t" + rs.getString(index++) + "\t" + rs.getString(index++)
-						+ "\t" + rs.getString(index++) + "\t" + rs.getDouble(index++) + "\t" + rs.getString(index++)
-						+ "\t" + rs.getDate(index++) + "\t" + rs.getDate(index++) + "\t" + rs.getDouble(index++) + "\t"
-						+ rs.getDouble(index++) + "\t" + rs.getString(index++) + "\t" + rs.getString(index++));
+
+				String orderId = Integer.valueOf(rs.getInt(index++)).toString();
+				String name = rs.getString(index++);
+				String productId = rs.getString(index++);
+				String distributorId = rs.getString(index++);
+				double quantityValue = rs.getDouble(index++);
+				String quantityUnit = rs.getString(index++);
+				Date dateOfOrder = rs.getDate(index++);
+				Date dateofDelivery = rs.getDate(index++);
+				double pricePerUnit = rs.getDouble(index++);
+				double totalPrice = rs.getDouble(index++);
+				String deliveryStatus = rs.getString(index++);
+				String warehouseId = rs.getString(index++);
+				poList1.add(new ProductOrder(orderId, name, productId, distributorId, quantityValue, quantityUnit,
+						dateOfOrder, dateofDelivery, pricePerUnit, totalPrice, deliveryStatus, warehouseId));
 
 			}
 			if (isFetched == 0) {
@@ -318,6 +364,7 @@ public class ProductDAOImpl implements ProductDAO {
 
 			}
 		}
+		return poList1;
 	}
 
 	/*****************************************************************
@@ -326,8 +373,9 @@ public class ProductDAOImpl implements ProductDAO {
 	 * of all received products from a particular distributor
 	 ********************************************************************/
 
-	public void displayReceivedProductOrderDetails() throws Exception {
-		{
+	public List<ProductOrder> displayReceivedProductOrderDetails() throws Exception {
+		
+			List<ProductOrder> poList1 = new ArrayList<ProductOrder>();
 
 			Connection connection = DBUtil.getInstance().getConnection();
 			PreparedStatement pst = null;
@@ -338,13 +386,23 @@ public class ProductDAOImpl implements ProductDAO {
 				int isFetched = 0;
 				while (rs.next()) {
 					isFetched = 1;
-
 					int index = 1;
-					System.out.println(rs.getInt(index++) + "\t" + rs.getString(index++) + "\t" + rs.getString(index++)
-							+ "\t" + rs.getString(index++) + "\t" + rs.getDouble(index++) + "\t" + rs.getString(index++)
-							+ "\t" + rs.getDate(index++) + "\t" + rs.getDate(index++) + "\t" + rs.getDouble(index++)
-							+ "\t" + rs.getDouble(index++) + "\t" + rs.getString(index++) + "\t"
-							+ rs.getString(index++));
+
+					String orderId = Integer.valueOf(rs.getInt(index++)).toString();
+					String name = rs.getString(index++);
+					String productId = rs.getString(index++);
+					String distributorId = rs.getString(index++);
+					double quantityValue = rs.getDouble(index++);
+					String quantityUnit = rs.getString(index++);
+					Date dateOfOrder = rs.getDate(index++);
+					Date dateofDelivery = rs.getDate(index++);
+					double pricePerUnit = rs.getDouble(index++);
+					double totalPrice = rs.getDouble(index++);
+					String deliveryStatus = rs.getString(index++);
+					String warehouseId = rs.getString(index++);
+					poList1.add(new ProductOrder(orderId, name, productId, distributorId, quantityValue, quantityUnit,
+							dateOfOrder, dateofDelivery, pricePerUnit, totalPrice, deliveryStatus, warehouseId));
+
 
 				}
 				if (isFetched == 0) {
@@ -370,8 +428,11 @@ public class ProductDAOImpl implements ProductDAO {
 
 				}
 			}
+			return poList1;
 		}
-	}
+	
+		
+	
 
 	/*****************************************************************
 	 * - Method Name: displayDispatchedProductOrderDetails - Input Parameters : -
@@ -379,7 +440,9 @@ public class ProductDAOImpl implements ProductDAO {
 	 * of all dispatched products from a particular distributor
 	 *******************************************************************/
 
-	public void displayDispatchedProductOrderDetails() throws Exception {
+	public List<ProductOrder> displayDispatchedProductOrderDetails() throws Exception {
+		List<ProductOrder> poList1 = new ArrayList<ProductOrder>();
+		
 		Connection connection = DBUtil.getInstance().getConnection();
 		PreparedStatement pst = null;
 		try {
@@ -389,12 +452,22 @@ public class ProductDAOImpl implements ProductDAO {
 			int isFetched = 0;
 			while (rs.next()) {
 				isFetched = 1;
-
 				int index = 1;
-				System.out.println(rs.getInt(index++) + "\t" + rs.getString(index++) + "\t" + rs.getString(index++)
-						+ "\t" + rs.getString(index++) + "\t" + rs.getDouble(index++) + "\t" + rs.getString(index++)
-						+ "\t" + rs.getDate(index++) + "\t" + rs.getDate(index++) + "\t" + rs.getDouble(index++) + "\t"
-						+ rs.getDouble(index++) + "\t" + rs.getString(index++) + "\t" + rs.getString(index++));
+
+				String orderId = Integer.valueOf(rs.getInt(index++)).toString();
+				String name = rs.getString(index++);
+				String productId = rs.getString(index++);
+				String distributorId = rs.getString(index++);
+				double quantityValue = rs.getDouble(index++);
+				String quantityUnit = rs.getString(index++);
+				Date dateOfOrder = rs.getDate(index++);
+				Date dateofDelivery = rs.getDate(index++);
+				double pricePerUnit = rs.getDouble(index++);
+				double totalPrice = rs.getDouble(index++);
+				String deliveryStatus = rs.getString(index++);
+				String warehouseId = rs.getString(index++);
+				poList1.add(new ProductOrder(orderId, name, productId, distributorId, quantityValue, quantityUnit,
+						dateOfOrder, dateofDelivery, pricePerUnit, totalPrice, deliveryStatus, warehouseId));
 
 			}
 			if (isFetched == 0) {
@@ -420,6 +493,7 @@ public class ProductDAOImpl implements ProductDAO {
 
 			}
 		}
+		return poList1;
 
 	}
 
@@ -429,7 +503,8 @@ public class ProductDAOImpl implements ProductDAO {
 	 * of all cancelled products from a particular distributor
 	 *******************************************************************/
 
-	public void displayCancelledProductOrderDetails() throws Exception {
+	public List<ProductOrder> displayCancelledProductOrderDetails() throws Exception {
+		List<ProductOrder> poList1 = new ArrayList<ProductOrder>();
 		Connection connection = DBUtil.getInstance().getConnection();
 		PreparedStatement pst = null;
 		try {
@@ -439,12 +514,22 @@ public class ProductDAOImpl implements ProductDAO {
 			int isFetched = 0;
 			while (rs.next()) {
 				isFetched = 1;
+				int index = 1;
 
-				int j = 1;
-				System.out.println(rs.getInt(j++) + "\t" + rs.getString(j++) + "\t" + rs.getString(j++) + "\t"
-						+ rs.getString(j++) + "\t" + rs.getDouble(j++) + "\t" + rs.getString(j++) + "\t"
-						+ rs.getDate(j++) + "\t" + rs.getDate(j++) + "\t" + rs.getDouble(j++) + "\t" + rs.getDouble(j++)
-						+ "\t" + rs.getString(j++) + "\t" + rs.getString(j++));
+				String orderId = Integer.valueOf(rs.getInt(index++)).toString();
+				String name = rs.getString(index++);
+				String productId = rs.getString(index++);
+				String distributorId = rs.getString(index++);
+				double quantityValue = rs.getDouble(index++);
+				String quantityUnit = rs.getString(index++);
+				Date dateOfOrder = rs.getDate(index++);
+				Date dateofDelivery = rs.getDate(index++);
+				double pricePerUnit = rs.getDouble(index++);
+				double totalPrice = rs.getDouble(index++);
+				String deliveryStatus = rs.getString(index++);
+				String warehouseId = rs.getString(index++);
+				poList1.add(new ProductOrder(orderId, name, productId, distributorId, quantityValue, quantityUnit,
+						dateOfOrder, dateofDelivery, pricePerUnit, totalPrice, deliveryStatus, warehouseId));
 
 			}
 			if (isFetched == 0) {
@@ -470,6 +555,7 @@ public class ProductDAOImpl implements ProductDAO {
 
 			}
 		}
+		return poList1;
 
 	}
 
@@ -819,9 +905,8 @@ public class ProductDAOImpl implements ProductDAO {
 
 		catch (Exception e) {
 			throw new ConnectionException(Constants.LOGGER_ERROR_MESSAGE_DATABASE_NOT_CONNECTED);
-			
+
 		}
-		
 
 	}
 

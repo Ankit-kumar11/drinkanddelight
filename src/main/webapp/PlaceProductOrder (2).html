@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Order Product</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<link rel="stylesheet" type="text/css" href="C:\Users\dgupta23\eclipse-workspace\MyBiodata\WebContent\WEB-INF\PlaceOrder.css">
+</head>
+
+<body>
+	<form action="PlaceProductOrderServlet" method ="post">
+		<div class="container" class="form-check" class="was-validated">
+		<div class="row">
+			<div class="col-lg-9 header-title">
+			<h1>Order placed for Product</h1>
+				<p>Please cross-verify the details twice before entering</p>
+			</div>
+			<div class="col-lg-3">
+			<a href="#"><img alt="logo" src="Images/logo.png" class="rounded-circle float-right header-img-title" width="120" height="120">
+			</a></div>
+		</div>
+<hr>
+		<div class="row">
+			<div class="col-sm-3">
+					<label for="ProductName"><b>Product Name</b></label>
+			</div>
+            <div class="col-sm-3">
+				    <select class="form-control" name="ProductName" required>
+        			<option>Energy Drink</option>
+        			<option>Juice</option>
+        			<option>Mocktail</option>
+        			<option>Soft Drink</option>
+        			<option>Tonic Water</option>
+        			</select>
+				</div>
+			</div>
+<br>
+
+<div class="row">
+				<div class="col-sm-3">
+					<label for="PSID"><b>Product ID</b></label>
+				</div>
+
+				<div class="col-sm-3">
+				
+				
+					<select class="form-control" name="PSID" required>
+        			<option>PSID1</option>
+        			<option>PSID2</option>
+        			<option>PSID3</option>
+        			<option>PSID4</option>
+        			<option>PSID5</option>
+        			
+        			
+        			
+      				</select>
+					
+					
+					
+						
+						
+				</div>
+			</div>
+			<br>
+	
+<div class="row">
+				<div class="col-sm-3">
+					<label for="DID"><b>Distributor ID</b></label>
+				</div>
+
+				<div class="col-sm-3">
+				
+				
+					<select class="form-control" name="DID" required>
+        			<option>d001</option>
+        			<option>d002</option>
+        			<option>d003</option>
+        			<option>d004</option>
+        			
+        			
+        			
+        			
+      				</select>
+					
+					
+					
+						
+						
+				</div>
+			</div>
+			<br>	
+			
+						
+				<div class="row">
+				<div class="col-sm-3">
+				<label for="Quantity"><b>Quantity</b></label>
+					</div>
+
+				<div class="col-sm-9">
+					 <input type="text"	placeholder="Enter quantity" name="Quantity" class = "text-box-size form-rounded" required><br>
+                </div>
+			    </div>
+<br>		    
+
+				<div class="row">
+				<div class="col-sm-3">
+				<label for="QuantityUnit"><b>Quantity Unit</b></label>
+					</div>
+				<div class="col-sm-3">
+				
+				
+					<select class="form-control" name="QuantityUnit" required>
+        			<option>litres</option>
+        			
+        			
+        			
+        			
+        			
+      				</select>
+					
+					
+				</div>	
+						
+						
+				</div>
+				
+<br>			
+				
+				<div class="row">
+				<div class="col-sm-3">
+			<label for="expectedDateofDelivery"><b>Expected Date of Delivery</b></label> 
+			</div>
+
+				<div class="col-sm-9">
+			<input type="date" name="expectedDateofDelivery" class = "text-box-size form-rounded">
+						</div>
+			</div>
+<br>
+
+<div class="row">
+				<div class="col-sm-3">
+			<label for="price_per_unit"><b>Price per Unit</b></label> 
+			</div>
+
+				<div class="col-sm-9">
+			<input type="text" placeholder="Enter amount in Rs" name="price_per_unit" class = "text-box-size form-rounded"
+				required>
+				</div>
+			</div>
+<br>			
+			
+				<div class="row">
+				<div class="col-sm-3">
+				<label for="warehouseId"><b>Warehouse ID</b></label>
+			
+			</div>
+
+
+			<div class="col-sm-3">
+				
+				
+					<select class="form-control" name="warehouseId" required>
+        			<option>w01</option>
+        			<option>w02</option>
+        			<option>w03</option>
+        			<option>w04</option>
+        			<option>w05</option>
+        			
+        			
+        			
+        			
+        			
+      				</select>
+					
+					
+				</div>
+			</div>
+
+
+			<br>
+
+			
+			<button type="submit" class="registerbtn">Place Order</button>
+		</div>
+
+		
+	</form>
+
+</body>
+</html>

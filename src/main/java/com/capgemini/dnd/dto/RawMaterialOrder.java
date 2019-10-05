@@ -19,11 +19,10 @@ public class RawMaterialOrder {
 
 
 	public RawMaterialOrder(String name, String rmId, String supplierId, double quantityValue,
-			String quantityUnit, Date dateOfOrder, Date dateOfDelivery, double pricePerUnit, String warehouseId) {
-//		super();
-		this.orderId = "OID" + orderIdCount++;
-		this.name = name;
-		this.rmId = rmId;
+		String quantityUnit, Date dateOfOrder, Date dateOfDelivery, double pricePerUnit, String warehouseId) {	super();
+	  this.orderId = "OID" + orderIdCount++;
+  	  this.name = name;
+	   this.rmId = rmId;
 		this.supplierId = supplierId;
 		this.quantityValue = quantityValue;
 		this.quantityUnit = quantityUnit;
@@ -32,6 +31,33 @@ public class RawMaterialOrder {
 		this.pricePerUnit = pricePerUnit;
 		this.totalPrice = this.quantityValue*this.pricePerUnit;
 		this.deliveryStatus = "PENDING";
+		this.warehouseId = warehouseId;
+	}
+
+	@Override
+	public String toString() {
+		return "RawMaterialOrder [orderId=" + orderId + ", name=" + name + ", rmId=" + rmId + ", supplierId="
+				+ supplierId + ", quantityValue=" + quantityValue + ", quantityUnit=" + quantityUnit + ", dateOfOrder="
+				+ dateOfOrder + ", dateOfDelivery=" + dateOfDelivery + ", pricePerUnit=" + pricePerUnit
+				+ ", totalPrice=" + totalPrice + ", deliveryStatus=" + deliveryStatus + ", warehouseId=" + warehouseId
+				+ "]";
+	}
+
+	public RawMaterialOrder(String orderId, String name, String rmId, String supplierId, double quantityValue,
+			String quantityUnit, Date dateOfOrder, Date dateOfDelivery, double pricePerUnit, double totalPrice,
+			String deliveryStatus, String warehouseId) {
+		super();
+		this.orderId = orderId;
+		this.name = name;
+		this.rmId = rmId;
+		this.supplierId = supplierId;
+		this.quantityValue = quantityValue;
+		this.quantityUnit = quantityUnit;
+		this.dateOfOrder = dateOfOrder;
+		this.dateOfDelivery = dateOfDelivery;
+		this.pricePerUnit = pricePerUnit;
+		this.totalPrice = totalPrice;
+		this.deliveryStatus = deliveryStatus;
 		this.warehouseId = warehouseId;
 	}
 

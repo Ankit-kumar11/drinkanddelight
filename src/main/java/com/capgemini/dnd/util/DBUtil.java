@@ -90,6 +90,7 @@ public class DBUtil {
 //			String fileName = "C:\\Users\\akum1031\\eclipse-workspace\\drinkanddelight\\src\\main\\resources\\jdbc.properties";
 			
 			String fileName = DBUtil.class.getClassLoader().getResource("").getPath()+"/jdbc.properties";
+			System.out.println(fileName);
             InputStream inputStream = new FileInputStream(fileName);
             newProps.load(inputStream);
             
