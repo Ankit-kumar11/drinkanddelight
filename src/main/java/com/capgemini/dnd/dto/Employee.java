@@ -1,6 +1,6 @@
 package com.capgemini.dnd.dto;
 
-import java.sql.Date;
+import java.util.Date;
 
 public class Employee {
 	private String empId;
@@ -125,8 +125,8 @@ public class Employee {
 		return dob;
 	}
 
-	public void setDob(Date dob) {
-		this.dob = dob;
+	public void setDob(Date date) {
+		this.dob = date;
 	}
 
 	public String getEmailId() {
